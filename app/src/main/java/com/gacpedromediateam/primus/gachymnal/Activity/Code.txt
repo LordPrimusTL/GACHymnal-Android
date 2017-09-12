@@ -1,0 +1,1789 @@
+AlertDialog.Builder langSel = new AlertDialog.Builder(getBaseContext());
+                langSel.setCancelable(false)
+                        .setTitle("Select Default Language")
+                        .setPositiveButton("Yoruba", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                                SharedPreferences.Editor e = getPrefs.edit();
+                                e.putInt("Language",1);
+                                e.apply();
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            }
+                        })
+                        .setNegativeButton("English", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+                                SharedPreferences.Editor e = getPrefs.edit();
+                                e.putInt("Language",0);
+                                e.apply();
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            }
+                        });
+
+                        AlertDialog.Builder langSel = new AlertDialog.Builder(getBaseContext());
+                                        langSel.setCancelable(false)
+                                                .setTitle("Select Default Language")
+                                                .setPositiveButton("Yoruba", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                                                        SharedPreferences.Editor e = getPrefs.edit();
+                                                        e.putInt("Language",1);
+                                                        e.apply();
+                                                        startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                                    }
+                                                }).setNegativeButton("English", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                                                SharedPreferences.Editor e = getPrefs.edit();
+                                                e.putInt("Language",0);
+                                                e.apply();
+                                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                            }
+                                        });
+
+                                       langSel.show();
+
+
+private void DoValidation() {
+        if(full_name.getText().toString().length() == 0)
+        {
+            full_name.setError("This Field Can't be Empty");
+        }
+
+        else if(branch.getText().toString().length() == 0)
+        {
+            branch.setError("This Field Can't be Empty");
+        }
+        else
+        {
+            if(res)
+            {
+                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+            }
+        }
+    }
+
+    class ApiCall extends AsyncTask{
+        public String GetHymnList = "http://10.0.2.2:8000/api_getmainhymn";
+        public String GetHymnListAPI = "http://gacserver.000webhostapp.com/api_getmainhymn";
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try
+            {
+                URL url = new URL(GetHymnList);
+                HttpURLConnection httpurl = (HttpURLConnection)url.openConnection();
+                httpurl.setRequestMethod("GET");
+                httpurl.connect();
+
+                InputStream is = httpurl.getInputStream();
+                int bytechar;
+                String result="";
+                while((bytechar = is.read()) != -1)
+                {
+                    result += (char)bytechar;
+                }
+
+                Log.d("api_result", result);
+            }
+            catch(java.io.IOException ex)
+            {
+                ex.printStackTrace();
+                Log.d("api_error",ex.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+        }
+    }*/
+
+
+    SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            boolean isFirstRun = getPrefs.getBoolean("AtFirstRun",true);
+            if(isFirstRun)
+            {
+                startActivity(new Intent(SplashActivity.this, IntroActivity.class));
+                finish();
+            }
+            else
+            {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+            }
+
+
+
+
+
+            package com.gacpedromediateam.primus.gachymnal.Activity;
+
+            import android.content.Context;
+            import android.content.DialogInterface;
+            import android.content.Intent;
+            import android.content.SharedPreferences;
+            import android.os.AsyncTask;
+            import android.os.Bundle;
+            import android.preference.PreferenceManager;
+            import android.support.annotation.Nullable;
+            import android.support.v4.app.Fragment;
+            import android.support.v4.app.LoaderManager;
+            import android.support.v4.content.AsyncTaskLoader;
+            import android.support.v4.content.ContextCompat;
+            import android.support.v4.content.Loader;
+            import android.support.v7.app.AlertDialog;
+            import android.util.Log;
+            import android.view.LayoutInflater;
+            import android.view.View;
+            import android.widget.Button;
+            import android.widget.EditText;
+            import android.widget.ProgressBar;
+            import android.widget.RadioButton;
+            import android.widget.Toast;
+
+            import com.gacpedromediateam.primus.gachymnal.Helper.FetchHymn;
+            import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
+            import com.gacpedromediateam.primus.gachymnal.Helper.User;
+            import com.gacpedromediateam.primus.gachymnal.Helper.Utility;
+            import com.gacpedromediateam.primus.gachymnal.R;
+            import com.gacpedromediateam.primus.gachymnal.SplashActivity;
+            import com.github.paolorotolo.appintro.AppIntro;
+            import com.github.paolorotolo.appintro.AppIntroFragment;
+
+            import org.json.JSONException;
+
+            import java.io.IOException;
+
+            /**
+             * Created by Primus on 7/7/2017.
+             */
+
+            public class IntroActivity extends AppIntro{
+
+                public boolean json;
+
+
+                Context context = this;
+                public ProgressBar pg = null;
+                public ProgressBar pgs = null;
+                public String full_name;
+                public String branch;
+                public RadioButton eng;
+                public RadioButton yor;
+                int i = 0;
+                NetworkHelper nh = new NetworkHelper(context);
+                @Override
+                protected void onCreate(Bundle savedInstanceState) {
+                    super.onCreate(savedInstanceState);
+
+                    addSlide(AppIntroFragment.newInstance("Welcome","This App is designed to ease the burden of going about with a hymn Book", R.drawable.download2png, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+                    addSlide(AppIntroFragment.newInstance("Language Change","You can change the default language by clicking on the button as shown in the image",R.drawable.tutorial2, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+                    addSlide(AppIntroFragment.newInstance("Search","Click on the button as shown above to move to the search page",R.drawable.searchpng, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+                    addSlide(AppIntroFragment.newInstance("Update","Click on the button as shown above to update the Hymn List",R.drawable.update, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+                }
+
+                @Override
+                public void onSkipPressed(Fragment currentFragment) {
+                    super.onSkipPressed(currentFragment);
+                    Dialogss();
+                }
+
+                @Override
+                public void onDonePressed(Fragment currentFragment) {
+                    super.onDonePressed(currentFragment);
+                    // Do something when users tap on Done button.
+                    Dialogss();
+                }
+
+                private void Dialogss()
+                {
+                    LayoutInflater layoutInflater = LayoutInflater.from(this);
+                    final View mView = layoutInflater.inflate(R.layout.activity_form,null);
+                    AlertDialog.Builder alertD = new AlertDialog.Builder(this);
+                    alertD.setCancelable(false);
+                    Button SubmitBtn = mView.findViewById(R.id.form_submit);
+                    Button SkipBtn = mView.findViewById(R.id.form_skip);
+                    pg = mView.findViewById(R.id.progressBar);
+                    pgs = mView.findViewById(R.id.progressBar3);
+                    pgs.setMax(100);
+                    eng = mView.findViewById(R.id.EngLang);
+                    yor = mView.findViewById(R.id.YorLang);
+
+                    SubmitBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            full_name = ((EditText) mView.findViewById(R.id.full_name)).getText().toString();
+                            branch = ((EditText) mView.findViewById(R.id.branch)).getText().toString();
+                            if(full_name.length() == 0)
+                            {
+                                ((EditText) mView.findViewById(R.id.full_name)).setError("This Field Can't be Empty");
+                            }
+
+                            else if(branch.length() == 0)
+                            {
+                                ((EditText) mView.findViewById(R.id.branch)).setError("This Field Can't be Empty");
+                            }
+                            else
+                            {
+                                (mView.findViewById(R.id.form_linearlayout)).setVisibility(View.GONE);
+                                pg.setVisibility(View.VISIBLE);
+                                (mView.findViewById(R.id.form_submit)).setVisibility(View.GONE);
+                                (mView.findViewById(R.id.form_skip)).setVisibility(View.GONE);
+                                mView.findViewById(R.id.loadTextview).setVisibility(View.VISIBLE);
+                                if(eng.isChecked())
+                                {
+                                    Do(1);
+                                }
+
+                                if(yor.isChecked())
+                                {
+                                    Do(0);
+                                }
+                            }
+
+                        }
+                    });
+
+                    SkipBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            full_name = "user";
+                            branch = "user_branch";
+                            if(full_name.length() == 0)
+                            {
+                                ((EditText) mView.findViewById(R.id.full_name)).setError("This Field Can't be Empty");
+                            }
+
+                            else if(branch.length() == 0)
+                            {
+                                ((EditText) mView.findViewById(R.id.branch)).setError("This Field Can't be Empty");
+                            }
+                            else
+                            {
+                                (mView.findViewById(R.id.form_linearlayout)).setVisibility(View.GONE);
+                                pg.setVisibility(View.VISIBLE);
+                                (mView.findViewById(R.id.form_submit)).setVisibility(View.GONE);
+                                (mView.findViewById(R.id.form_skip)).setVisibility(View.GONE);
+                                mView.findViewById(R.id.loadTextview).setVisibility(View.VISIBLE);
+                                if(eng.isChecked())
+                                {
+                                    Do(1);
+                                }
+
+                                if(yor.isChecked())
+                                {
+                                    Do(0);
+                                }
+                            }
+
+                        }
+                    });
+
+
+                    alertD.setView(mView);
+                    alertD.show();
+                }
+
+
+                private void Do(Integer i) {
+                    try
+                    {
+                        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                        SharedPreferences.Editor e = getPrefs.edit();
+                        e.putInt("Language",i).apply();
+                        //e.putInt("Language",i).putBoolean("AtFirstRun",false).apply();
+                        if(new Utility(this).FirstRunActivity(context,new User(full_name,branch)))
+                        {
+                            getSupportLoaderManager().initLoader(1,null,MainHymnLoader);
+                            getSupportLoaderManager().initLoader(2,null,AppHymnLoader);
+                            getSupportLoaderManager().initLoader(3,null,MainVerseLoader);
+                            getSupportLoaderManager().initLoader(4,null,AppVerseLoader);
+                            getSupportLoaderManager().initLoader(5,null,PostDataLoader);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.v("DoMethod",ex.toString());
+                    }
+                }
+
+                public void gethymns(){
+                    Log.i("GETHYMN","Attempting to pull data from server...");
+
+                    try{
+                        if(nh.isConnected())
+                        {
+                            new GetApi().execute();
+                        }
+                        else
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("NO INTERNET CONNECTION")
+                                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            gethymns();
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startActivity(new Intent(IntroActivity.this, SplashActivity.class));
+                                            finish();
+                                        }
+                                    })
+                                    .setCancelable(false)
+
+                                    .show();
+                        }
+
+
+                    }
+                    catch(Exception e)
+                    {
+                        Log.i("Call Async",e.toString());
+                    }
+                }
+
+
+                class GetApi extends AsyncTask{
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected Object doInBackground(Object[] objects) {
+                        Log.i("BackThread","Attempting to pull data from server...");
+                        try {
+
+                            json = nh.GetHymns();
+                            if(json)
+                            {
+                                if(nh.PostRequest(full_name, branch))
+                                {
+                                    return "1";
+                                }
+                                return"0";
+                            }
+                            else
+                            {
+                                return "0";
+                            }
+                        }
+                        catch (JSONException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                        catch(IOException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Object result) {
+                        super.onPostExecute(result);
+                        if(result == "1")
+                        {
+                            SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                            SharedPreferences.Editor e = getPrefs.edit();
+                            e.putBoolean("AtFirstRun",false);
+                            e.apply();
+                            Log.i("OnPost","Success!!!");
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                        else
+                        {
+                            SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                            SharedPreferences.Editor e = getPrefs.edit();
+                            e.putBoolean("AtFirstRun",true);
+                            e.apply();
+                            Log.i("OnPost","Failed!!!");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage("An Error Occured")
+                                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                new GetApi().execute();
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(IntroActivity.this,"Please Restart The App and check your connectivity",Toast.LENGTH_LONG).show();
+                                        }
+                                    })
+                                    .setCancelable(false)
+
+                                    .show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
+                    super.onSlideChanged(oldFragment, newFragment);
+                    // Do something when the slide changes.
+                }
+
+                @Override
+                public void onBackPressed() {
+                    moveTaskToBack(true);
+                    finish();
+                    super.onBackPressed();
+                }
+
+                private LoaderManager.LoaderCallbacks<Boolean> MainHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                    @Override
+                    public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                        return new FetchHymn.GetMainHymn(getApplicationContext());
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                        if(data)
+                        {
+                            i = i + 20;
+                            pg.setProgress(1);
+                            pgs.setProgress(1);
+                            if(i == 100)
+                            {
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Boolean> loader) {
+
+                    }
+                };
+                private LoaderManager.LoaderCallbacks<Boolean> AppHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                    @Override
+                    public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                        return new FetchHymn.GetAppHymn(getApplicationContext());
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                        if(data)
+                        {
+                            i = i + 20;
+                            pgs.setProgress(1);
+                            if(i == 100)
+                            {
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Boolean> loader) {
+
+                    }
+                };
+                private LoaderManager.LoaderCallbacks<Boolean> MainVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                    @Override
+                    public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                        return new FetchHymn.GetMainVerse(getApplicationContext());
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                        if(data)
+                        {
+                            i = i + 20;
+                            pgs.setProgress(1);
+                            pgs.incrementProgressBy(1);
+                            if(i == 100)
+                            {
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Boolean> loader) {
+
+                    }
+                };
+                private LoaderManager.LoaderCallbacks<Boolean> AppVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                    @Override
+                    public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                        return new FetchHymn.GetAppVerse(getApplicationContext());
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                        if(data)
+                        {
+                            i = i + 20;
+                            pgs.setProgress(1);
+                            if(i == 100)
+                            {
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Boolean> loader) {
+
+                    }
+                };
+                private LoaderManager.LoaderCallbacks<Boolean> PostDataLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                    @Override
+                    public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                        return new FetchHymn.PostInstallation(getApplicationContext(),full_name,branch);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                        if(data)
+                        {
+                            i = i + 20;
+                            pgs.setProgress(1);
+                            if(i == 100)
+                            {
+                                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Boolean> loader) {
+
+                    }
+                };
+            }
+
+package com.gacpedromediateam.primus.gachymnal.Activity;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.Toast;
+
+import com.gacpedromediateam.primus.gachymnal.Helper.FetchHymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
+import com.gacpedromediateam.primus.gachymnal.Helper.User;
+import com.gacpedromediateam.primus.gachymnal.Helper.Utility;
+import com.gacpedromediateam.primus.gachymnal.R;
+import com.gacpedromediateam.primus.gachymnal.SplashActivity;
+import com.github.paolorotolo.appintro.AppIntro;
+import com.github.paolorotolo.appintro.AppIntroFragment;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+
+/**
+ * Created by Primus on 7/7/2017.
+ */
+
+public class IntroActivity extends AppIntro{
+
+    public boolean json;
+
+
+    Context context = this;
+    public ProgressBar pg = null;
+    public ProgressBar pgs = null;
+    public String full_name;
+    public String branch;
+    public RadioButton eng;
+    public RadioButton yor;
+    int i = 0;
+    NetworkHelper nh = new NetworkHelper(context);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        addSlide(AppIntroFragment.newInstance("Welcome","This App is designed to ease the burden of going about with a hymn Book", R.drawable.download2png, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+        addSlide(AppIntroFragment.newInstance("Language Change","You can change the default language by clicking on the button as shown in the image",R.drawable.tutorial2, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+        addSlide(AppIntroFragment.newInstance("Search","Click on the button as shown above to move to the search page",R.drawable.searchpng, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+        addSlide(AppIntroFragment.newInstance("Update","Click on the button as shown above to update the Hymn List",R.drawable.update, ContextCompat.getColor(this,R.color.colorPrimaryDark)));
+    }
+
+    @Override
+    public void onSkipPressed(Fragment currentFragment) {
+        super.onSkipPressed(currentFragment);
+        Dialogss();
+    }
+
+    @Override
+    public void onDonePressed(Fragment currentFragment) {
+        super.onDonePressed(currentFragment);
+        // Do something when users tap on Done button.
+        Dialogss();
+    }
+
+    private void Dialogss()
+    {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View mView = layoutInflater.inflate(R.layout.activity_form,null);
+        AlertDialog.Builder alertD = new AlertDialog.Builder(this);
+        alertD.setCancelable(false);
+        Button SubmitBtn = mView.findViewById(R.id.form_submit);
+        Button SkipBtn = mView.findViewById(R.id.form_skip);
+        pg = mView.findViewById(R.id.progressBar);
+        pgs = mView.findViewById(R.id.progressBar3);
+        pgs.setMax(100);
+        eng = mView.findViewById(R.id.EngLang);
+        yor = mView.findViewById(R.id.YorLang);
+
+        SubmitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                full_name = ((EditText) mView.findViewById(R.id.full_name)).getText().toString();
+                branch = ((EditText) mView.findViewById(R.id.branch)).getText().toString();
+                if(full_name.length() == 0)
+                {
+                    ((EditText) mView.findViewById(R.id.full_name)).setError("This Field Can't be Empty");
+                }
+
+                else if(branch.length() == 0)
+                {
+                    ((EditText) mView.findViewById(R.id.branch)).setError("This Field Can't be Empty");
+                }
+                else
+                {
+                    (mView.findViewById(R.id.form_linearlayout)).setVisibility(View.GONE);
+                    pg.setVisibility(View.VISIBLE);
+                    (mView.findViewById(R.id.form_submit)).setVisibility(View.GONE);
+                    (mView.findViewById(R.id.form_skip)).setVisibility(View.GONE);
+                    mView.findViewById(R.id.loadTextview).setVisibility(View.VISIBLE);
+                    if(eng.isChecked())
+                    {
+                        Do(1);
+                    }
+
+                    if(yor.isChecked())
+                    {
+                        Do(0);
+                    }
+                }
+
+            }
+        });
+
+        SkipBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                full_name = "user";
+                branch = "user_branch";
+                if(full_name.length() == 0)
+                {
+                    ((EditText) mView.findViewById(R.id.full_name)).setError("This Field Can't be Empty");
+                }
+
+                else if(branch.length() == 0)
+                {
+                    ((EditText) mView.findViewById(R.id.branch)).setError("This Field Can't be Empty");
+                }
+                else
+                {
+                    (mView.findViewById(R.id.form_linearlayout)).setVisibility(View.GONE);
+                    pg.setVisibility(View.VISIBLE);
+                    (mView.findViewById(R.id.form_submit)).setVisibility(View.GONE);
+                    (mView.findViewById(R.id.form_skip)).setVisibility(View.GONE);
+                    mView.findViewById(R.id.loadTextview).setVisibility(View.VISIBLE);
+                    if(eng.isChecked())
+                    {
+                        Do(1);
+                    }
+
+                    if(yor.isChecked())
+                    {
+                        Do(0);
+                    }
+                }
+
+            }
+        });
+
+
+        alertD.setView(mView);
+        alertD.show();
+    }
+
+
+    private void Do(Integer i) {
+        try
+        {
+            SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor e = getPrefs.edit();
+            e.putInt("Language",i).apply();
+            //e.putInt("Language",i).putBoolean("AtFirstRun",false).apply();
+            if(new Utility(this).FirstRunActivity(context,new User(full_name,branch)))
+            {
+                getSupportLoaderManager().initLoader(1,null,MainHymnLoader);
+                getSupportLoaderManager().initLoader(2,null,AppHymnLoader);
+                getSupportLoaderManager().initLoader(3,null,MainVerseLoader);
+                getSupportLoaderManager().initLoader(4,null,AppVerseLoader);
+                getSupportLoaderManager().initLoader(5,null,PostDataLoader);
+            }
+        }
+        catch(Exception ex)
+        {
+            Log.v("DoMethod",ex.toString());
+        }
+    }
+
+    public void gethymns(){
+        Log.i("GETHYMN","Attempting to pull data from server...");
+
+        try{
+            if(nh.isConnected())
+            {
+                new GetApi().execute();
+            }
+            else
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("NO INTERNET CONNECTION")
+                        .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                gethymns();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(IntroActivity.this, SplashActivity.class));
+                                finish();
+                            }
+                        })
+                        .setCancelable(false)
+
+                        .show();
+            }
+
+
+        }
+        catch(Exception e)
+        {
+            Log.i("Call Async",e.toString());
+        }
+    }
+
+
+    class GetApi extends AsyncTask{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            Log.i("BackThread","Attempting to pull data from server...");
+            try {
+
+                json = nh.GetHymns();
+                if(json)
+                {
+                    if(nh.PostRequest(full_name, branch))
+                    {
+                        return "1";
+                    }
+                    return"0";
+                }
+                else
+                {
+                    return "0";
+                }
+            }
+            catch (JSONException ex)
+            {
+                ex.printStackTrace();
+            }
+            catch(IOException ex)
+            {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object result) {
+            super.onPostExecute(result);
+            if(result == "1")
+            {
+                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                SharedPreferences.Editor e = getPrefs.edit();
+                e.putBoolean("AtFirstRun",false);
+                e.apply();
+                Log.i("OnPost","Success!!!");
+                startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                finish();
+            }
+            else
+            {
+                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                SharedPreferences.Editor e = getPrefs.edit();
+                e.putBoolean("AtFirstRun",true);
+                e.apply();
+                Log.i("OnPost","Failed!!!");
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("An Error Occured")
+                        .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                    new GetApi().execute();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(IntroActivity.this,"Please Restart The App and check your connectivity",Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setCancelable(false)
+
+                        .show();
+            }
+        }
+    }
+
+    @Override
+    public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
+        super.onSlideChanged(oldFragment, newFragment);
+        // Do something when the slide changes.
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        finish();
+        super.onBackPressed();
+    }
+
+    private LoaderManager.LoaderCallbacks<Boolean> MainHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new FetchHymn.GetMainHymn(getApplicationContext());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if(data)
+            {
+                i = i + 20;
+                pg.setProgress(1);
+                pgs.setProgress(1);
+                if(i == 100)
+                {
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+    private LoaderManager.LoaderCallbacks<Boolean> AppHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new FetchHymn.GetAppHymn(getApplicationContext());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if(data)
+            {
+                i = i + 20;
+                pgs.setProgress(1);
+                if(i == 100)
+                {
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+    private LoaderManager.LoaderCallbacks<Boolean> MainVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new FetchHymn.GetMainVerse(getApplicationContext());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if(data)
+            {
+                i = i + 20;
+                pgs.setProgress(1);
+                pgs.incrementProgressBy(1);
+                if(i == 100)
+                {
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+    private LoaderManager.LoaderCallbacks<Boolean> AppVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new FetchHymn.GetAppVerse(getApplicationContext());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if(data)
+            {
+                i = i + 20;
+                pgs.setProgress(1);
+                if(i == 100)
+                {
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+    private LoaderManager.LoaderCallbacks<Boolean> PostDataLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new FetchHymn.PostInstallation(getApplicationContext(),full_name,branch);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if(data)
+            {
+                i = i + 20;
+                pgs.setProgress(1);
+                if(i == 100)
+                {
+                    startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+}
+
+
+    public void FetchMainHymn() {
+        Log.i("MainHymn", "Attempting To Pull Main Hymn Form Server");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetMainHymnList, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                try{
+                    Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                    DbHelper db = new DbHelper(context);
+                    db.open();
+                    db.AddMainHymn(jsonArray);
+                    db.close();
+                    SP();
+                }
+                catch(Exception ex)
+                {
+                    Log.i("VolleyGetMainHymn",ex.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.i("VolleyGetMainHymn",volleyError.toString());
+                }
+        });
+
+
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
+    }
+    public void FetchMainVerse() {
+        Log.i("Main Verse", "Attempting To Pull Main Verse Form Server");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetMainVerseList, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                try{
+                    Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                    DbHelper db = new DbHelper(context);
+                    db.open();
+                    db.AddMainVerse(jsonArray);
+                    db.close();
+                }
+                catch(Exception ex)
+                {
+                    Log.i("VolleyGetMainVerse",ex.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.i("VolleyGetMainVerse",volleyError.toString());
+                }
+        });
+
+
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
+    }
+    public void FetchAppHymn() {
+        Log.i("APPHymn", "Attempting To Pull Appendix Hymn Form Server");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetAppHymnList, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                try{
+                    Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                    DbHelper db = new DbHelper(context);
+                    db.open();
+                    db.AddAppHymn(jsonArray);
+                    db.close();
+                    SP();
+                }
+                catch(Exception ex)
+                {
+                    Log.i("VolleyGetMainVerse",ex.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.i("VolleyGetMainVerse",volleyError.toString());
+                }
+        });
+
+
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
+    }
+    public void FetchAppVerse() {
+        Log.i("APP Verse", "Attempting To Pull Appendix Verse Form Server");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetAppVerseList, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                try{
+                    Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                    DbHelper db = new DbHelper(context);
+                    db.open();
+                    db.AddAppVerse(jsonArray);
+                    db.close();
+                    SP();
+                }
+                catch(Exception ex)
+                {
+                    Log.i("VolleyGetAppVerse",ex.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.i("VolleyGetAppVerse",volleyError.toString());
+                }
+        });
+
+
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
+    }
+    public void SendPost() {
+        Log.i("Sending Data", "Attempting To SendInstallation to Server");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, PostInstallations, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                try{
+                    Log.i("SendData","success " + jsonArray.toString());
+
+                    SP();
+                }
+                catch(Exception ex)
+                {
+                    Log.i("VolleySendData",ex.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.i("VolleySendData",volleyError.toString());
+                }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Name", full_name);
+                params.put("Branch",branch);
+                params.put("UUID",new Utility(getApplicationContext()).AndroidUUID());
+                params.put("PhoneType", new Utility(getApplicationContext()).PhoneType());
+                params.put("AndroidID", new Utility(getApplicationContext()).AndroidID());
+
+                return params;
+
+            }
+        };
+
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
+    }
+
+      public static class fetchMainHymn extends AsyncTaskLoader<Boolean>{
+            public String GetMainHymnList = "http://10.0.2.2:8000/API/getmainhymn";
+            public Boolean status = false;
+            /** The default socket timeout in milliseconds */
+            public static final int DEFAULT_TIMEOUT_MS = 2500;
+
+            /** The default number of retries */
+            public static final int DEFAULT_MAX_RETRIES = 1;
+
+            /** The default backoff multiplier */
+            public static final float DEFAULT_BACKOFF_MULT = 1f;
+            public fetchMainHymn(Context context) {
+                super(context);
+            }
+
+            @Override
+            protected void onStartLoading() {
+                forceLoad();
+            }
+
+            @Override
+            public Boolean loadInBackground() {
+                try{
+                    Log.i("MainHymn", "Attempting To Pull Main Hymn Form Server");
+                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetMainHymnList, null, new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray jsonArray) {
+                            try{
+                                Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                                DbHelper db = new DbHelper(getContext());
+                                db.open();
+                                db.AddMainHymn(jsonArray);
+                                db.close();
+                                status = true;
+                            }
+                            catch(Exception ex)
+                            {
+                                Log.i("VolleyGetMainHymn",ex.toString());
+                                status = false;
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.i("VolleyGetMainHymn",volleyError.toString());
+                            status = false;
+                        }
+                    });
+                    jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
+                            (int) TimeUnit.SECONDS.toMillis(20),
+                            0,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    status = false;
+                    return status;
+                }
+                return  status;
+            }
+
+            @Override
+            public void deliverResult(Boolean data) {
+                super.deliverResult(data);
+            }
+        }
+        public static class fetchAppHymn extends AsyncTaskLoader<Boolean> {
+            public String GetAppHymnList = "http://10.0.2.2:8000/API/getapphymn";
+            public Boolean status = false;
+            public fetchAppHymn(Context context) {
+                super(context);
+            }
+
+            @Override
+            protected void onStartLoading() {
+                forceLoad();
+            }
+
+            @Override
+            public Boolean loadInBackground() {
+                try{
+                    Log.i("APPHymn", "Attempting To Pull Appendix Hymn Form Server");
+                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetAppHymnList, null, new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray jsonArray) {
+                            try{
+                                Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                                DbHelper db = new DbHelper(getContext());
+                                db.open();
+                                db.AddAppHymn(jsonArray);
+                                db.close();
+                                status = true;
+                            }
+                            catch(Exception ex)
+                            {
+                                Log.i("VolleyGetMainVerse",ex.toString());
+                                status = false;
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.i("VolleyGetMainVerse",volleyError.toString());
+                            status = false;
+                        }
+                    });
+
+                    Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+                    return status;
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    return status;
+                }
+            }
+
+            @Override
+            public void deliverResult(Boolean data) {
+                super.deliverResult(data);
+            }
+        }
+        public static class fetchMainVerse extends AsyncTaskLoader<Boolean>{
+            public String GetMainVerseList = "http://10.0.2.2:8000/API/getmainverse";
+            public Boolean status = false;
+            public fetchMainVerse(Context context) {
+                super(context);
+            }
+
+            @Override
+            protected void onStartLoading() {
+                forceLoad();
+            }
+
+            @Override
+            public Boolean loadInBackground() {
+                try{
+                    Log.i("Main Verse", "Attempting To Pull Main Verse Form Server");
+                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetMainVerseList, null, new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray jsonArray) {
+                            try{
+                                Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                                DbHelper db = new DbHelper(getContext());
+                                db.open();
+                                db.AddMainVerse(jsonArray);
+                                db.close();
+                                status = true;
+                            }
+                            catch(Exception ex)
+                            {
+                                Log.i("VolleyGetMainVerse",ex.toString());
+                                status = false;
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.i("VolleyGetMainVerse",volleyError.toString());
+                            status = false;
+                        }
+                    });
+                    Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+                    return status;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    status = false;
+                }
+                return status;
+            }
+
+            @Override
+            public void deliverResult(Boolean data) {
+                super.deliverResult(data);
+            }
+        }
+        public static class fetchAppVerse extends AsyncTaskLoader<Boolean>{
+            public String GetAppVerseList = "http://10.0.2.2:8000/API/getappverse";
+            public Boolean status = false;
+            public fetchAppVerse(Context context) {
+                super(context);
+            }
+
+            @Override
+            protected void onStartLoading() {
+                forceLoad();
+            }
+
+            @Override
+            public Boolean loadInBackground() {
+                try{
+                    Log.i("APP Verse", "Attempting To Pull Appendix Verse Form Server");
+                    JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GetAppVerseList, null, new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray jsonArray) {
+                            try{
+                                Log.i("json array conversion", jsonArray.toString() + " " + jsonArray.length());
+                                DbHelper db = new DbHelper(getContext());
+                                db.open();
+                                db.AddAppVerse(jsonArray);
+                                db.close();
+                                status = true;
+                            }
+                            catch(Exception ex)
+                            {
+                                Log.i("VolleyGetAppVerse",ex.toString());
+                                status = false;
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.i("VolleyGetAppVerse",volleyError.toString());
+                            status = false;
+                        }
+                    });
+                    Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+                    return status;
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    status = false;
+                }
+                return status;
+            }
+
+            @Override
+            public void deliverResult(Boolean data) {
+                super.deliverResult(data);
+            }
+        }
+        public static class PostInstallation extends AsyncTaskLoader<Boolean> {
+
+            public String PostInstallations = "http://10.0.2.2:8000/API/installations";
+            public String full_name;
+            public String branch;
+            public Boolean status = false;
+
+            public PostInstallation(Context context, String full_name, String branch) {
+                super(context);
+                this.full_name = full_name;
+                this.branch = branch;
+            }
+
+            @Override
+            protected void onStartLoading() {
+                forceLoad();
+            }
+
+            @Override
+            public Boolean loadInBackground() {
+                try{
+                    Log.i("Posting Data"," Attmepting to post data to server");
+                    Log.i("Sending Data", "Attempting To SendInstallation to Server");
+                    JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST, PostInstallations, null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            try {
+                                Log.i("SendData", "success " + jsonObject.toString());
+                                status = true;
+                            } catch (Exception ex) {
+                                Log.i("VolleySendData", ex.toString());
+                                status = false;
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Name", full_name);
+                            params.put("Branch",branch);
+                            params.put("UUID",new Utility(getContext()).AndroidUUID());
+                            params.put("PhoneType", new Utility(getContext()).PhoneType());
+                            params.put("AndroidID", new Utility(getContext()).AndroidID());
+                            Log.i("Params", params.toString());
+                            return params;
+                        }
+                    };
+                    Volley.newRequestQueue(getContext()).add(jsonArrayRequest);
+                    return status;
+
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    status = false;
+                }
+                return  status;
+            }
+
+            @Override
+            public void deliverResult(Boolean data) {
+                super.deliverResult(data);
+            }
+        }
+
+         private LoaderManager.LoaderCallbacks<Boolean> MainHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                @Override
+                public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                    return new fetchMainHymn(getApplicationContext());
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                    if(data)
+                    {
+                        i = i + 20;
+                        pg.setProgress(1);
+                        pgs.setProgress(1);
+                        if(i == 100)
+                        {
+                            pgs.setVisibility(View.INVISIBLE);
+                            Log.i("ProgressBar"," Should Stop Now");
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                        else{
+                            Log.i("Main hymn Fetch","Failed");
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                    else{
+                        Log.i("Main hymn Fetch","Failed");
+                        startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Boolean> loader) {
+
+                }
+            };
+            private LoaderManager.LoaderCallbacks<Boolean> AppHymnLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                @Override
+                public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                    return new fetchAppHymn(getApplicationContext());
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                    if(data)
+                    {
+                        i = i + 20;
+                        pgs.setProgress(1);
+                        if(i == 100)
+                        {
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Boolean> loader) {
+
+                }
+            };
+            private LoaderManager.LoaderCallbacks<Boolean> MainVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+                @Override
+                public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                    return new fetchMainVerse(getApplicationContext());
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                    if(data)
+                    {
+                        i = 100;
+                        pgs.setProgress(1);
+                        pgss.setProgress(1);
+                        if(i == 20)
+                        {
+                           pgs.setVisibility(View.INVISIBLE);
+                            Log.i("ProgressBar"," Should Stop Now");
+                        }
+                    }
+                    else{
+                            Log.i("Main hymn Fetch","Failed");
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Boolean> loader) {
+
+                }
+            };
+            private LoaderManager.LoaderCallbacks<Boolean> AppVerseLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+
+                @Override
+                public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                    return new fetchAppVerse(getApplicationContext());
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                    if(data)
+                    {
+                        i = i + 20;
+                        pgs.setProgress(1);
+                        if(i == 100)
+                        {
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Boolean> loader) {
+
+                }
+            };
+            private LoaderManager.LoaderCallbacks<Boolean> PostDataLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+
+                @Override
+                public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+                    return new PostInstallation(getApplicationContext(),full_name,branch);
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+                    if(data)
+                    {
+                        i = i + 20;
+                        pgs.setProgress(1);
+                        if(i == 100)
+                        {
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Boolean> loader) {
+
+                }
+            };
+
+            class GetApi extends AsyncTask{
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected Object doInBackground(Object[] objects) {
+                        Log.i("BackThread","Attempting to pull data from server...");
+                        try {
+
+                            json = nh.GetHymns();
+                            if(json)
+                            {
+                                if(nh.PostRequest(full_name, branch))
+                                {
+                                    return "1";
+                                }
+                                return"0";
+                            }
+                            else
+                            {
+                                return "0";
+                            }
+                        }
+                        catch (JSONException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                        catch(IOException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Object result) {
+                        super.onPostExecute(result);
+                        if(result == "1")
+                        {
+                            SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                            SharedPreferences.Editor e = getPrefs.edit();
+                            e.putBoolean("AtFirstRun",false);
+                            e.apply();
+                            Log.i("OnPost","Success!!!");
+                            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+                            finish();
+                        }
+                        else
+                        {
+                            SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                            SharedPreferences.Editor e = getPrefs.edit();
+                            e.putBoolean("AtFirstRun",true);
+                            e.apply();
+                            Log.i("OnPost","Failed!!!");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage("An Error Occured")
+                                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                new GetApi().execute();
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(IntroActivity.this,"Please Restart The App and check your connectivity",Toast.LENGTH_LONG).show();
+                                        }
+                                    })
+                                    .setCancelable(false)
+
+                                    .show();
+
+                        }
+                    }
+                }
+
+ public void gethymns(){
+        Log.i("GETHYMN","Attempting to pull data from server...");
+
+        try{
+            if(nh.isConnected())
+            {
+                new GetApi().execute();
+            }
+            else
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("NO INTERNET CONNECTION")
+                        .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                gethymns();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(IntroActivity.this, SplashActivity.class));
+                                finish();
+                            }
+                        })
+                        .setCancelable(false)
+
+                        .show();
+            }
+
+
+        }
+        catch(Exception e)
+        {
+            Log.i("Call Async",e.toString());
+        }
+    }
+
+
+/*public void getUpdateKey() {
+        Log.i("GAC Update", "Getting Update Key");
+
+        StringRequestGU = new StringRequest(Request.Method.GET, GetUpdateKey, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String updateString) {
+                try{
+                    Log.i("UpdateKey", updateString);
+                    SP(1);
+                }
+                catch(Exception ex)
+                {
+                    Log.i("Update Key",ex.toString());
+                    SP(false);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.i("Update Key",volleyError.toString());
+                SP(false);
+            }
+        }){
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+               try {
+                    String jsonString = new String(response.data, "UTF-8");
+                    SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    SharedPreferences.Editor e = getPrefs.edit();
+                    e.putString("UpdateKey",jsonString).apply();
+                    Log.i("Response",jsonString);
+
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                return super.parseNetworkResponse(response);
+            }
+        };
+        StringRequestGU.setRetryPolicy(new DefaultRetryPolicy(
+                (int) SECONDS.toMillis(20),
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(this).add(StringRequestGU);
+    }*/

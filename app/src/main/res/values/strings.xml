@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GAC Hymnal</string>
+    <string name="maker">Powered by GAC Pedro Media Team\nCanary v1.2</string>
+    <string name="app_intro_skip_button">SKIP</string>
+    <string name="app_intro_done_button">DONE</string>
+    <string name="app_intro_submit_button">Submit</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_view">ViewActivity</string>
+    <string name="title_activity_form_load">FormLoadActivity</string>
+    <string name="title_activity_zoom">ZoomActivity</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <SearchView
+        android:id="@+id/search_view_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_action_search"
+        android:iconifiedByDefault="false"
+        android:padding="2dp"
+        android:queryHint="Search…"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+
+    <include layout="@layout/hymn_list_view"
+        android:id="@+id/appendix_list_view"
+        android:divider="?android:listDivider"
+        />
+</LinearLayout>

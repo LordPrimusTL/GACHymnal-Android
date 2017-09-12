@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/viewHymnTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:layout_gravity="center"
+            android:text="Hymn Title"
+            android:textSize="22sp"
+            android:textAlignment="center"
+            android:paddingTop="20dp"
+            android:textColor="@android:color/black"/>
+        <ListView
+            android:paddingTop="30dp"
+            android:id="@+id/view_hymn_list"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:listSelector="@android:color/transparent"/>
+        <TextView
+            android:id="@+id/AmenAmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:layout_gravity="right"
+            android:text="Amen."
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:paddingTop="10dp"
+            android:paddingLeft="150dp"
+            android:paddingBottom="10dp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+</LinearLayout>
