@@ -1,5 +1,6 @@
 package com.gacpedromediateam.primus.gachymnal.Activity;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +9,9 @@ import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +33,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +47,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.gacpedromediateam.primus.gachymnal.Fragments.MainFragment;
 import com.gacpedromediateam.primus.gachymnal.Fragments.AppFragment;
+import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.Utility;
 import com.gacpedromediateam.primus.gachymnal.R;
@@ -61,71 +66,70 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class MainActivity extends AppCompatActivity {
     public Context context = this;
     NetworkHelper nh = new NetworkHelper(this);
+    AppPreference appPreference;
+    CoordinatorLayout cord;
+    int language;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean isFirstRun = getPrefs.getBoolean("AtFirstRun",true);
-        if(isFirstRun)
-        {
-            startActivity(new Intent(MainActivity.this, IntroActivity.class));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        cord = (CoordinatorLayout) findViewById(R.id.main_content);
+        appPreference = new AppPreference(MainActivity.this);
+        toolbar.setTitle("GAC E-Hymn");
+        ActionBar supportActionBar = getSupportActionBar();
+        language = appPreference.getLanguage();
+        if (supportActionBar != null) {
+            //VectorDrawableCompat indicator
+            //      = VectorDrawableCompat.create(getResources(), R.drawable.ic_action_nam, getTheme());
+            //indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
+            //supportActionBar.setHomeAsUpIndicator(indicator);
+            //supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle("GAC E-Hymn");
         }
-        else
-        {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
 
-            toolbar.setTitle("GAC Hymn Book");
-            //toolbar.setLogo(R.drawable.download2png);
-            ActionBar supportActionBar = getSupportActionBar();
-            if (supportActionBar != null) {
-                //VectorDrawableCompat indicator
-                //      = VectorDrawableCompat.create(getResources(), R.drawable.ic_action_nam, getTheme());
-                //indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
-                //supportActionBar.setHomeAsUpIndicator(indicator);
-                //supportActionBar.setDisplayHomeAsUpEnabled(true);
-                supportActionBar.setTitle("GAC E-Hymn");
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                final BottomSheetDialog mBottomSheet = new BottomSheetDialog(MainActivity.this);
+                View sheetView = getLayoutInflater().inflate(R.layout.user_lang_select, null);
+                mBottomSheet.setContentView(sheetView);
+                LinearLayout english = sheetView.findViewById(R.id.english_lang);
+                LinearLayout yoruba = sheetView.findViewById(R.id.yoruba_lang);
+                english.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        appPreference.setLanguage(1);
+                        language = 1;
+                        mBottomSheet.dismiss();
+                        DoVoid();
+
+                    }
+                });
+                yoruba.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        appPreference.setLanguage(0);
+                        language = 0;
+                        mBottomSheet.dismiss();
+                        DoVoid();
+                    }
+                });
+                mBottomSheet.show();
             }
-            // Create the adapter that will return a fragment for each of the three
-            // primary sections of the activity.
-            DoVoid(getPrefs.getInt("Language",1));
+        });
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    final SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    final SharedPreferences.Editor e = getPrefs.edit();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Change Default Language")
-                            .setTitle("Language Change")
-                            .setPositiveButton("English", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    e.putInt("Language",1).apply();
-                                    Snackbar.make(view, "English Language", Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-                                    DoVoid(1);
-                                }
-                            })
-                            .setNegativeButton("Yoruba", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    e.putInt("Language",0).apply();
-                                    Snackbar.make(view, "Ede Yoruba", Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-                                    DoVoid(0);
-                                }
-                            })
-                            .setCancelable(false)
+        DoVoid();
 
-                            .show();
-                }
-            });
-        }
 
     }
 
-    private void DoVoid(int language) {
+    private void DoVoid() {
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager,language);
         // Set Tabs inside Toolbar
@@ -180,58 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        //overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch (id){
-            case R.id.action_refresh:
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Do you wan to check for update?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int which) {
-                                startActivity(new Intent(MainActivity.this,FormLoadActivity.class));
-
-                            }
-
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setCancelable(false)
-
-                        .show();
-                //Toast.makeText(this,"You selected Refresh",Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_feedback:
-                //Toast.makeText(this,"You selected Feedback",Toast.LENGTH_SHORT).show();
-                if(nh.isConnected()) {
-                    startActivity(new Intent(MainActivity.this, FeedbackActivity.class));
-                }
-                else{
-                    Toast.makeText(this,"No internet connection, Please try again",Toast.LENGTH_LONG).show();
-                }
-                return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-
-        //noinspection SimplifiableIfStatement
-    }
-
-
-    public StringRequest StringRequestGU;
-    public String GetUpdateKey = "http://10.0.2.2:8000/API/getUpdateKey";
 }

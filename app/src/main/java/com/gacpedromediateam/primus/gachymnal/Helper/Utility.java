@@ -35,7 +35,7 @@ public class Utility {
         String uniqueID = UUID.randomUUID().toString();
         String AndroiID = Settings.Secure.ANDROID_ID;
 
-        Log.i("Android ID", AndroiID);
+        Log.e("Android ID", AndroiID);
         return uniqueID;
     }
 
@@ -57,7 +57,7 @@ public class Utility {
            DbHelper db = new DbHelper(context);
            db.open();
            user.UUID = AndroidUUID();
-           db.AddUser(user);
+           //db.AddUser(user);
            db.close();
            return true;
        }

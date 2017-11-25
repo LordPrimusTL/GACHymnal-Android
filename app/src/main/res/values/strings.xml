@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">GAC Hymnal</string>
-    <string name="maker">Powered by GAC Pedro Media Team\nCanary v1.2</string>
+    <string name="maker">Powered by G.A.C Pedro Media Team</string>
     <string name="app_intro_skip_button">SKIP</string>
     <string name="app_intro_done_button">DONE</string>
     <string name="app_intro_submit_button">Submit</string>
@@ -13,4 +13,6 @@
     <string name="title_activity_view">ViewActivity</string>
     <string name="title_activity_form_load">FormLoadActivity</string>
     <string name="title_activity_zoom">ZoomActivity</string>
+    <string name="dedication">This project is dedicated to the Life, \nTimes and Memories of this great Man of God, Rev. S.A Sadela. \nThank You for Everything!\n - GAC Pedro Media Team.</string>
+    <string name="verseTest">Awake, my soul, and with the sun\nThy daily stage of duty run;\nShake off dull sloth, and joyful rise,\nTo pay thy morning sacrifice.</string>
 </resources>

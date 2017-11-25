@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.gacpedromediateam.primus.gachymnal.Activity.ViewActivity;
 import com.gacpedromediateam.primus.gachymnal.Adapters.AppListAdapter;
+import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
 import com.gacpedromediateam.primus.gachymnal.R;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 public class AppFragment extends Fragment {
 
     public Integer Language;
-
+    AppPreference appPreference;
     public AppListAdapter adapter;
     public AppFragment() {
         // Required empty public constructor
@@ -40,9 +41,10 @@ public class AppFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        appPreference = new AppPreference(getContext());
         View view = null;
         SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Language = getPrefs.getInt("Language",1);
+        Language = appPreference.getLanguage();
         ArrayList<hymn> GetHymns = GetHymnList(Language);
 
         view = inflater.inflate(R.layout.fragment_app_hymn,container,false);
@@ -63,7 +65,10 @@ public class AppFragment extends Fragment {
                 startActivity(new Intent(getActivity(), ViewActivity.class)
                         .putExtra("HymnID",String.valueOf(fullObject.getID()))
                         .putExtra("title",fullObject.getTitle())
-                        .putExtra("hymnType",String.valueOf(1)));            }
+                        .putExtra("hymnType",String.valueOf(1)));
+                getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+            }
         });
         SearchView inputText = view.findViewById(R.id.search_view_app);
         inputText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

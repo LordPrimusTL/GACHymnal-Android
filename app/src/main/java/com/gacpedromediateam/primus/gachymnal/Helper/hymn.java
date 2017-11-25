@@ -30,4 +30,14 @@ public class hymn {
     public String getTitle() {
         return title;
     }
+
+    @Override
+    public String toString() {
+        return "hymn{" +
+                "hymn_id=" + hymn_id +
+                ", english='" + english + '\'' +
+                ", yoruba='" + yoruba + '\'' +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

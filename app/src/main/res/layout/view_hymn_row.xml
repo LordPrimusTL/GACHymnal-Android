@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAlignment="center"
-            android:paddingLeft="10dp"
+            android:padding="15dp"
             android:text="1"
             android:paddingTop="20dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -28,9 +28,12 @@
             android:id="@+id/HymnVerse"
             android:textSize="20sp"
             android:paddingTop="20dp"
+            android:paddingStart="20dp"
+            android:paddingBottom="20dp"
             android:fontFamily="sans-serif-light"
+            android:text="@string/verseTest"
             android:textColor="@android:color/black"
-            android:gravity="center"
+            android:gravity="start"
             />
     </LinearLayout>
 </LinearLayout>

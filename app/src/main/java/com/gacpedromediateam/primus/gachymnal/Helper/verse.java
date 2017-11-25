@@ -33,6 +33,17 @@ public class verse {
         return hymn_id;
     }
 
+    @Override
+    public String toString() {
+        return "verse{" +
+                "hymn_id=" + hymn_id +
+                ", verse_id=" + verse_id +
+                ", english='" + english + '\'' +
+                ", yoruba='" + yoruba + '\'' +
+                ", word='" + word + '\'' +
+                '}';
+    }
+
     public Integer getVerse_id() {
         return verse_id;
     }
@@ -44,6 +55,8 @@ public class verse {
     public String getYoruba() {
         return yoruba;
     }
+
+
 
 
 }

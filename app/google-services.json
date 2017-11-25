@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "910154028300",
+    "firebase_url": "https://gachymnal.firebaseio.com",
+    "project_id": "gachymnal",
+    "storage_bucket": "gachymnal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910154028300:android:f827dcba62d49985",
+        "android_client_info": {
+          "package_name": "com.gacpedromediateam.primus.gachymnal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "910154028300-pp6roin2n52ct0a1clj0rm9cre4fc2hl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gacpedromediateam.primus.gachymnal",
+            "certificate_hash": "db0f606b54fa5e63988f2ff916d8a172f3bd3b4c"
+          }
+        },
+        {
+          "client_id": "910154028300-edffapu2vh80mnr2n701q7ae6arlv4fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGwbKKeF3ZHsbAmNFp_6jNM4tcEBwRaJs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "910154028300-edffapu2vh80mnr2n701q7ae6arlv4fj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

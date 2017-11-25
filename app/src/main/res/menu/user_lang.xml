@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_chat_clear"
+        app:showAsAction="ifRoom|withText"
+        android:title="Yoruba"
+        android:visible="true"
+        android:icon="@drawable/ic_action_lang"/>
+    <item
+        android:id="@+id/item_delete_chat"
+        app:showAsAction="ifRoom|withText"
+        android:title="English"
+        android:visible="true"
+        android:icon="@drawable/ic_action_lang"/>
+</menu>
