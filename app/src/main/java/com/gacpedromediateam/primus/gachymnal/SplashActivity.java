@@ -67,11 +67,10 @@ public class SplashActivity extends AppCompatActivity {
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
             Thread.sleep((int) TimeUnit.SECONDS.toMillis(3));
             new LongOperation().execute();
-            Log.e(TAG, "onCreate: Sleep Finished ");
+            Log.e(TAG, "onCreate: Sleep Finished.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //new LongOperation().execute();
     }
 
 
@@ -92,7 +91,6 @@ public class SplashActivity extends AppCompatActivity {
                         if(!request)
                             pBar.show();
                         getHymnFromServer();
-
                     }
                 });
 
@@ -141,9 +139,7 @@ public class SplashActivity extends AppCompatActivity {
             FirebaseCrash.report(ex);
         }
     }
-
-    public void showAlert(final String message)
-    {
+    public void showAlert(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -177,6 +173,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
     }
+
+
     private void callGetMainHymn() {
         retrofitClient = new RetrofitClient(context,RetrofitClient.Defaulthost);
         retrofitClient.getApiService().getMainHymn()
@@ -193,6 +191,7 @@ public class SplashActivity extends AppCompatActivity {
                         error = true;
                         showAlert("No Internet!");
                         Log.e("Error",throwable.getMessage().toString());
+                        FirebaseCrash.report(throwable);
                     }
 
                     @Override
@@ -223,6 +222,8 @@ public class SplashActivity extends AppCompatActivity {
                         error = true;
                         showAlert("No Internet");
                         Log.e("Error",throwable.getMessage().toString());
+                        FirebaseCrash.report(throwable);
+
                     }
 
                     @Override
@@ -253,6 +254,7 @@ public class SplashActivity extends AppCompatActivity {
                         error = true;
                         showAlert("No Internet");
                         Log.e(TAG, "onError: Main verse + " + throwable);
+                        FirebaseCrash.report(throwable);
                     }
 
                     @Override
@@ -279,6 +281,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onError(Throwable throwable) {
                         showAlert("No Internet");
                         Log.e(TAG, "onError: App verse + " + throwable);
+                        FirebaseCrash.report(throwable);
                     }
 
                     @Override
@@ -305,19 +308,18 @@ public class SplashActivity extends AppCompatActivity {
 
                         //showAlert(throwable.toString());
                         Log.e(TAG, "onError: +" + throwable.toString());
+                        FirebaseCrash.report(throwable);
                     }
 
                     @Override
                     public void onNext(String s) {
-                        if(s.equals("1"))
-                        {
+                        if(s.equals("1")) {
                             appPreference.setSentDetails(true);
                         }
                         Log.e(TAG, "onNext: Post" + s );
                     }
                 });
     }
-
     private void checkCount() {
         runOnUiThread(new Runnable() {
             @Override

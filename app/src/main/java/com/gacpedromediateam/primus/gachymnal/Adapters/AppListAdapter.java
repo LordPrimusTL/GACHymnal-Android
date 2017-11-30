@@ -23,10 +23,12 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
     private static ArrayList<hymn> filteredData;
     private LayoutInflater mInflater;
     private HymnFilter mFilter;
+    private Integer lang;
 
-    public AppListAdapter(Context context, ArrayList<hymn> results) {
+    public AppListAdapter(Context context, ArrayList<hymn> results, Integer lang) {
         hymnChar = results;
         mInflater = LayoutInflater.from(context);
+        this.lang = lang;
         this.filteredData = results;
     }
 
@@ -55,8 +57,13 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.ID.setText(String.valueOf(hymnChar.get(position).getID()));
-        holder.Title.setText(hymnChar.get(position).getTitle());
+        if(lang == 1){
+            holder.ID.setText(String.valueOf(hymnChar.get(position).getID()));
+            holder.Title.setText(hymnChar.get(position).getEnglish());
+        }else{
+            holder.ID.setText(String.valueOf(hymnChar.get(position).getID()));
+            holder.Title.setText(hymnChar.get(position).getYoruba());
+        }
 
         return convertView;
     }

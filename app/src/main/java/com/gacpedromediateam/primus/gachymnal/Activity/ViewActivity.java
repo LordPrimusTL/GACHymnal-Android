@@ -1,18 +1,11 @@
 package com.gacpedromediateam.primus.gachymnal.Activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,73 +22,73 @@ import android.widget.Toast;
 import com.gacpedromediateam.primus.gachymnal.Adapters.HymnViewAdapter;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
+import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 import com.gacpedromediateam.primus.gachymnal.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import pl.polidea.view.ZoomView;
 
-import static com.gacpedromediateam.primus.gachymnal.R.id.fab;
-
 public class ViewActivity extends AppCompatActivity {
     public String ID;
     public String Title;
     public String HymnType;
-    public Integer Language;
+    public Integer language;
     public ZoomView zoomView;
     AppPreference appPreference;
     String TAG = "ViewActivity";
     CoordinatorLayout cord;
+    private hymn payload;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
         appPreference = new AppPreference(ViewActivity.this);
-        cord = (CoordinatorLayout) findViewById(R.id.view_container);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.vhtoolbar);
+        cord = findViewById(R.id.view_container);
+        Toolbar toolbar = findViewById(R.id.vhtoolbar);
+        toolbar.setTitle("Am Here");
         View v = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_hymn_layout, null, false);
         v.setLayoutParams(new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-
         zoomView = new ZoomView(this);
         zoomView.addView(v);
 
-        RelativeLayout main_container = (RelativeLayout) findViewById(R.id.relativezoomId);
+        RelativeLayout main_container =  findViewById(R.id.relativezoomId);
         main_container.addView(zoomView);
         setSupportActionBar(toolbar);
         ActionBar supportActionBar = getSupportActionBar();
-        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Language = appPreference.getLanguage();
+        language = appPreference.getLanguage();
 
         if(getIntent().getExtras()!= null)
         {
+            //Log.e(TAG, "onCreate: " +getIntent().getStringExtra("hymn"));
             if(getIntent().getExtras().containsKey("title") || getIntent().getExtras().containsKey("hymnType") || getIntent().getExtras().containsKey("HymnID") )
             {
                 ID = getIntent().getStringExtra("HymnID");
                 Title = getIntent().getStringExtra("title");
                 HymnType = getIntent().getStringExtra("hymnType");
+
+                payload = new Gson().fromJson(getIntent().getStringExtra("hymn"), hymn.class);
             }
             else
             {
-                Toast.makeText(this, "Error receiving data, Please restart app", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Error receiving data, Please restart app", Toast.LENGTH_SHORT).show();
             }
 
         }
 
         if (supportActionBar != null) {
-            //VectorDrawableCompat indicator
-            //      = VectorDrawableCompat.create(getResources(), R.drawable.ic_action_nam, getTheme());
-            //indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
-            //supportActionBar.setHomeAsUpIndicator(indicator);
             if(Integer.parseInt(HymnType) == 0)
             {
                 supportActionBar.setDisplayHomeAsUpEnabled(true);
-                supportActionBar.setTitle("Hymn " + ID);
+                supportActionBar.setTitle((language == 0 ? "Iwe Orin " : "Hymn ") + ID);
             }
             if(Integer.parseInt(HymnType) == 1)
             {
                 supportActionBar.setDisplayHomeAsUpEnabled(true);
-                supportActionBar.setTitle("Appendix " + ID);
+                supportActionBar.setTitle((language == 0 ? "Akokun " : "Appendix ") + ID);
             }
 
         }
@@ -104,10 +97,24 @@ public class ViewActivity extends AppCompatActivity {
     }
 
     private void populateList() {
-        ((TextView)findViewById(R.id.viewHymnTitle)).setText(Title);
+
+        if (getSupportActionBar() != null) {
+            if(Integer.parseInt(HymnType) == 0)
+            {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle((language == 0 ? "Iwe Orin " : "Hymn ") + ID);
+            }
+            if(Integer.parseInt(HymnType) == 1)
+            {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle((language == 0 ? "Akokun " : "Appendix ") + ID);
+            }
+
+        }
+        ((TextView)findViewById(R.id.viewHymnTitle)).setText(language == 0 ? payload.getYoruba() : payload.getEnglish());
         ArrayList<verse> GetVerse = GetVerse(ID);
-        ListView listView = (ListView)findViewById(R.id.view_hymn_list);
-        listView.setAdapter(new HymnViewAdapter(this,GetVerse));
+        ListView listView = findViewById(R.id.view_hymn_list);
+        listView.setAdapter(new HymnViewAdapter(this,GetVerse,language));
     }
 
     @Override
@@ -131,23 +138,14 @@ public class ViewActivity extends AppCompatActivity {
         }
         else
         {
-            if(Language == 1)
-            {
-                while(res.moveToNext()) {
-                    verseChars.add(new verse((res.getInt(2)), String.valueOf(res.getString(3))));
-                }
 
-                ((TextView)findViewById(R.id.AmenAmin)).setText("Amen.");
-
+            while(res.moveToNext()) {
+                verseChars.add(new verse(res.getInt(1), res.getInt(2), res.getString(3),String.valueOf(res.getString(4))));
             }
 
-            if(Language == 0)
-            {
-                while(res.moveToNext()) {
-                    verseChars.add(new verse((res.getInt(2)), String.valueOf(res.getString(4))));
-                }
-                ((TextView)findViewById(R.id.AmenAmin)).setText("Amin.");
-            }
+            Log.e(TAG, "GetVerse: " + verseChars);
+            ((TextView)findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
+
         }
         return verseChars;
     }
@@ -172,7 +170,7 @@ public class ViewActivity extends AppCompatActivity {
                 english.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Language = 1;
+                        language = 1;
                         appPreference.setLanguage(1);
                         mBottomSheet.dismiss();
                         populateList();
@@ -182,14 +180,13 @@ public class ViewActivity extends AppCompatActivity {
                 yoruba.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Language = 0;
+                        language = 0;
                         appPreference.setLanguage(0);
                         mBottomSheet.dismiss();
                         populateList();
                     }
                 });
                 mBottomSheet.show();
-                Log.e(TAG, "onOptionsItemSelected: " + id);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

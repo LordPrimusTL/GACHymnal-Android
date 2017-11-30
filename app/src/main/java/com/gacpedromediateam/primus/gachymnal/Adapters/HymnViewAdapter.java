@@ -20,10 +20,11 @@ public class HymnViewAdapter extends BaseAdapter {
     private static ArrayList<verse> verseChar;
 
     private LayoutInflater mInflater;
-
-    public HymnViewAdapter(Context context, ArrayList<verse> results) {
+    private int lang;
+    public HymnViewAdapter(Context context, ArrayList<verse> results, int lang) {
         verseChar = results;
         mInflater = LayoutInflater.from(context);
+        this.lang = lang;
     }
 
     public int getCount() {
@@ -51,8 +52,13 @@ public class HymnViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.ID.setText(String.valueOf(verseChar.get(position).getVerse_id()));
-        holder.Title.setText(verseChar.get(position).getWord());
+        if (lang == 1) {
+            holder.ID.setText(String.valueOf(verseChar.get(position).getVerse_id()));
+            holder.Title.setText(verseChar.get(position).getEnglish());
+        }else{
+            holder.ID.setText(String.valueOf(verseChar.get(position).getVerse_id()));
+            holder.Title.setText(verseChar.get(position).getYoruba());
+        }
 
         return convertView;
     }

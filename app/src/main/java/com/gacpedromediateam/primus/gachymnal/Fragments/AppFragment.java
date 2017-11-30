@@ -22,6 +22,7 @@ import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
 import com.gacpedromediateam.primus.gachymnal.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -30,9 +31,10 @@ import java.util.ArrayList;
  */
 public class AppFragment extends Fragment {
 
-    public Integer Language;
+    public Integer language;
     AppPreference appPreference;
     public AppListAdapter adapter;
+    public String TAG = "App List";
     public AppFragment() {
         // Required empty public constructor
     }
@@ -44,15 +46,15 @@ public class AppFragment extends Fragment {
         appPreference = new AppPreference(getContext());
         View view = null;
         SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Language = appPreference.getLanguage();
-        ArrayList<hymn> GetHymns = GetHymnList(Language);
+        language = appPreference.getLanguage();
+        ArrayList<hymn> GetHymns = GetHymnList();
 
         view = inflater.inflate(R.layout.fragment_app_hymn,container,false);
         final ListView listView  = view.findViewById(R.id.appendix_list_view);
 
         //final ListView listView = (ListView) view.findViewById(R.id.main_list_view);
 
-        adapter = new AppListAdapter(this.getActivity(), GetHymns);
+        adapter = new AppListAdapter(this.getActivity(), GetHymns, language);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -63,6 +65,7 @@ public class AppFragment extends Fragment {
                 Log.i("Hymn Details", fullObject.getTitle() + String.valueOf(fullObject.getID()));
                 //Toast.makeText(getActivity(), "You have chosen: " + " " + fullObject.getID(), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(getActivity(), ViewActivity.class)
+                        .putExtra("hymn", new Gson().toJson(fullObject))
                         .putExtra("HymnID",String.valueOf(fullObject.getID()))
                         .putExtra("title",fullObject.getTitle())
                         .putExtra("hymnType",String.valueOf(1)));
@@ -86,7 +89,7 @@ public class AppFragment extends Fragment {
         return view;
     }
 
-    private ArrayList<hymn> GetHymnList(Integer Language) {
+    private ArrayList<hymn> GetHymnList() {
         ArrayList<hymn> hymnChars = new ArrayList<>();
         DbHelper db = new DbHelper(getActivity());
         db.open();
@@ -97,19 +100,8 @@ public class AppFragment extends Fragment {
             return  null;
         }
         else{
-            if(Language == 1)
-            {
-                while(res.moveToNext()) {
-                    hymnChars.add(new hymn(res.getInt(1), res.getString(2)));
-                }
-
-            }
-
-            if(Language == 0)
-            {
-                while(res.moveToNext()) {
-                    hymnChars.add(new hymn(res.getInt(1), res.getString(3)));
-                }
+            while(res.moveToNext()) {
+                hymnChars.add(new hymn(res.getInt(1), res.getString(2), res.getString(3)));
             }
             return hymnChars;
         }

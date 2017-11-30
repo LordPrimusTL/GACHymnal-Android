@@ -78,21 +78,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         cord = (CoordinatorLayout) findViewById(R.id.main_content);
         appPreference = new AppPreference(MainActivity.this);
-        toolbar.setTitle("GAC E-Hymn");
+        toolbar.setTitle("    GAC Hymnal");
         ActionBar supportActionBar = getSupportActionBar();
         language = appPreference.getLanguage();
         if (supportActionBar != null) {
-            //VectorDrawableCompat indicator
-            //      = VectorDrawableCompat.create(getResources(), R.drawable.ic_action_nam, getTheme());
-            //indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
-            //supportActionBar.setHomeAsUpIndicator(indicator);
-            //supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setTitle("GAC E-Hymn");
+            supportActionBar.setTitle("      GAC Hymnal");
         }
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -130,22 +125,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void DoVoid() {
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager viewPager = findViewById(R.id.container);
         setupViewPager(viewPager,language);
         // Set Tabs inside Toolbar
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
     }
 
-    private void setupViewPager(ViewPager viewPager, int Language) {
+    private void setupViewPager(ViewPager viewPager, int language) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        if(Language == 1)
+        if(language == 1)
         {
             adapter.addFragment(new MainFragment(), "Main");
             adapter.addFragment(new AppFragment(), "Appendix");
         }
 
-        if(Language  == 0)
+        if(language  == 0)
         {
             adapter.addFragment(new MainFragment(), "Iwe Orin");
             adapter.addFragment(new AppFragment(), "Akokun");
@@ -154,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    static class Adapter extends FragmentPagerAdapter {
+    private static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 

@@ -8,6 +8,23 @@ public class hymn {
 
     public Integer hymn_id;
     public String english;
+
+    public String getEnglish() {
+        return english;
+    }
+
+    public void setEnglish(String english) {
+        this.english = english;
+    }
+
+    public String getYoruba() {
+        return yoruba;
+    }
+
+    public void setYoruba(String yoruba) {
+        this.yoruba = yoruba;
+    }
+
     public String yoruba;
     public String title;
 
@@ -30,6 +47,7 @@ public class hymn {
     public String getTitle() {
         return title;
     }
+
 
     @Override
     public String toString() {
