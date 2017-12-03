@@ -93,10 +93,18 @@ public class MainListAdapter extends BaseAdapter implements Filterable{
                 ArrayList<hymn> filterList = new ArrayList<>();
                 for(int i = 0; i < filteredData.size(); i++)
                 {
-                    if((filteredData.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
-                            (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
-                        hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getTitle());
-                        filterList.add(hh);
+                    if(lang == 1){
+                        if((filteredData.get(i).getEnglish().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
+                            hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba());
+                            filterList.add(hh);
+                        }
+                    }else{
+                        if((filteredData.get(i).getYoruba().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
+                                (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
+                            hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba());
+                            filterList.add(hh);
+                        }
                     }
                 }
 

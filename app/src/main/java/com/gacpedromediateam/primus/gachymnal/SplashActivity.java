@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.gacpedromediateam.primus.gachymnal.Activity.MainActivity;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
@@ -324,17 +325,19 @@ public class SplashActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            dataCount++;
-            if(dataCount == 4)
-            {
-                request = true;
-                pBar.dismiss();
-                appPreference.setAtFirstRun(false);
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
-                finish();
-                db.close();
-            }
+                dataCount++;
+                if(dataCount == 4)
+                {
+                    request = true;
+                    pBar.dismiss();
+                    db.close();
+                    appPreference.setAtFirstRun(false);
+                    Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                    finish();
+
+                }
             }
         });
     }
