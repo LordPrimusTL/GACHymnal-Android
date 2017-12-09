@@ -14,7 +14,6 @@
 
     <uses-permission-sdk-23 android:name="android.permission.READ_PHONE_STATE" />
 
-
     <application
         android:name=".Http.MyApplication"
         android:allowBackup="true"
@@ -24,14 +23,15 @@
         android:theme="@style/AppTheme">
         <service android:name=".Http.MyFirebase">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".Http.MyFirebaseInstanceID">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
@@ -58,6 +58,21 @@
             android:name=".Activity.FeedbackActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:parentActivityName=".Activity.MainActivity" />
+        <activity
+            android:name=".RVTest"
+            android:label="@string/title_activity_rvtest"
+            android:parentActivityName=".SplashActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gacpedromediateam.primus.gachymnal.SplashActivity" />
+        </activity>
+        <activity
+            android:name=".Activity.FavoritesActivity"
+            android:label="@string/title_activity_favorites"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
+            android:parentActivityName=".Activity.MainActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

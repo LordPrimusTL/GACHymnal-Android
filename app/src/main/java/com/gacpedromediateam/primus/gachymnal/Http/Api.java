@@ -1,6 +1,6 @@
 package com.gacpedromediateam.primus.gachymnal.Http;
 
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 
 import java.util.List;
@@ -23,10 +23,10 @@ public interface Api {
     String EndPoint = "http://10.0.2.2:8000/";
 
     @GET("getmainhymn")
-    Observable<List<hymn>> getMainHymn();
+    Observable<List<Hymn>> getMainHymn();
 
     @GET("getapphymn")
-    Observable<List<hymn>> getAppHymn();
+    Observable<List<Hymn>> getAppHymn();
 
     @GET("getmainverse")
     Observable<List<verse>> getMainVerse();

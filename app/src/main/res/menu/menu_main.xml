@@ -4,14 +4,8 @@
     tools:context="com.gacpedromediateam.primus.gachymnal.Activity.MainActivity">
 
     <item
-        android:id="@+id/action_refresh"
-        android:icon="@drawable/ic_action_refresh_light"
-        android:title="Refresh Hymns"
+        android:id="@+id/action_fave"
+        android:icon="@drawable/ic_action_fave_all"
+        android:title="Favorites"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_feedback"
-        android:icon="@drawable/ic_action_feedback"
-        android:title="Feedback"
-        app:showAsAction="always"/>
-
 </menu>

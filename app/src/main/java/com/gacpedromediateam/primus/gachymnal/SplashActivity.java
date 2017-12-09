@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,7 +20,7 @@ import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.Utility;
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 import com.gacpedromediateam.primus.gachymnal.Http.RetrofitClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -181,7 +180,7 @@ public class SplashActivity extends AppCompatActivity {
         retrofitClient.getApiService().getMainHymn()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<hymn>>() {
+                .subscribe(new Subscriber<List<Hymn>>() {
                     @Override
                     public void onCompleted() {
 
@@ -196,7 +195,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(final List<hymn> hymns) {
+                    public void onNext(final List<Hymn> hymns) {
                         if(hymns.size() ==  400)
                             appPreference.setMainHymn(new Gson().toJson(hymns));
 
@@ -212,7 +211,7 @@ public class SplashActivity extends AppCompatActivity {
         retrofitClient.getApiService().getAppHymn()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<hymn>>() {
+                .subscribe(new Subscriber<List<Hymn>>() {
                     @Override
                     public void onCompleted() {
 
@@ -228,7 +227,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(final List<hymn> hymns) {
+                    public void onNext(final List<Hymn> hymns) {
                         if(hymns.size() ==  100)
                             appPreference.setAppHymn(new Gson().toJson(hymns));
 

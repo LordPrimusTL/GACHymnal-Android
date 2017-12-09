@@ -33,6 +33,7 @@ public  class DbHelper{
     public static final String MHCOLHYMNID = "hymn_id";
     public static final String MHCOLENG = "english";
     public static final String MHCOLYOR = "yoruba";
+    public static final String MHFAVE = "favorite";
     public static final String VHCOLHYMNID = "hymn_id";
     public static final String VHCOLVERSEID = "verse_id";
     public static final String VHCOLENG = "english";
@@ -62,6 +63,7 @@ public  class DbHelper{
 
 
 
+
     public class SqlHelper extends SQLiteOpenHelper {
         SQLiteDatabase db;
         //private final Context context;
@@ -72,8 +74,8 @@ public  class DbHelper{
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String CREATE_TABLE_MAIN_HYMN = "CREATE TABLE `main_hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT )";
-            String CREATE_TABLE_APP_HYMN = "CREATE TABLE `appendix_hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT )";
+            String CREATE_TABLE_MAIN_HYMN = "CREATE TABLE `main_hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT, `favorite` INTEGER NOT NULL)";
+            String CREATE_TABLE_APP_HYMN = "CREATE TABLE `appendix_hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT, `favorite` BOOLEAN NOT NULL )";
             String CREATE_TABLE_MAIN_VERSE = "CREATE TABLE `main_verse` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`hymn_id` INTEGER NOT NULL,`verse_id` INTEGER NOT NULL,`english` TEXT,`yoruba` TEXT);";
             String CREATE_TABLE_APP_VERSE = "CREATE TABLE `appendix_verse` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`hymn_id` INTEGER NOT NULL,`verse_id` INTEGER NOT NULL,`english` TEXT,`yoruba` TEXT);";
             db.execSQL(CREATE_TABLE_MAIN_HYMN);
@@ -102,21 +104,22 @@ public  class DbHelper{
         db.execSQL("DELETE from `main_hymn`");
         Log.i("Main Hymn", "Truncated");
         db.execSQL("DELETE from `appendix_hymn`");
-        Log.i("App hymn", "Truncated");
+        Log.i("App Hymn", "Truncated");
         db.execSQL("DELETE from `main_verse`");
         Log.i("truncate App Verse", "Truncated");
         db.execSQL("DELETE from `appendix_verse`");
         Log.i("App Verse", "Truncated");
     }
 
-    public void addMainHymnList(List<hymn> hymns) {
+    public void addMainHymnList(List<Hymn> hymns) {
 
         ContentValues cv = new ContentValues();
-        for (hymn mh: hymns) {
+        for (Hymn mh: hymns) {
             try{
                 cv.put(MHCOLHYMNID, mh.hymn_id);
                 cv.put(MHCOLENG, mh.english);
                 cv.put(MHCOLYOR, mh.yoruba);
+                cv.put(MHFAVE, 0);
                 db.insert(TABLE_MAIN_HYMN, null, cv);
             }catch(Exception ex){
                 Log.e(TAG, "addMainHymnList: " + ex );
@@ -124,14 +127,15 @@ public  class DbHelper{
         }
         Log.e("Add Main Hymn", "Success ");
     }
-    public void addAppHymnList(List<hymn> hymns) {
+    public void addAppHymnList(List<Hymn> hymns) {
 
         ContentValues cv = new ContentValues();
-        for (hymn mh: hymns) {
+        for (Hymn mh: hymns) {
             try{
                 cv.put(MHCOLHYMNID, mh.hymn_id);
                 cv.put(MHCOLENG, mh.english);
                 cv.put(MHCOLYOR, mh.yoruba);
+                cv.put(MHFAVE, 0);
                 db.insert(TABLE_APP_HYMN, null, cv);
             }catch(Exception ex){
                 Log.e(TAG, "addAppHymnList: " + ex );
@@ -172,105 +176,6 @@ public  class DbHelper{
     }
 
 
-    public boolean AddMainHymn(JSONArray jsonArray) {
-        ContentValues cv = new ContentValues();
-
-        hymn mh;
-
-        for(int i = 0; i < jsonArray.length(); i++)
-        { JSONObject jsonObject;
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-                mh = new hymn(jsonObject.getInt("id"),jsonObject.getString("english"),jsonObject.getString("yoruba"));
-                cv.put(MHCOLHYMNID, mh.hymn_id);
-                cv.put(MHCOLENG, mh.english);
-                cv.put(MHCOLYOR, mh.yoruba);
-                db.insert(TABLE_MAIN_HYMN, null, cv);
-                Log.i("Add Main Hymn", "Success " + mh.toString());
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-    public boolean AddAppHymn(JSONArray jsonArray) {
-        ContentValues cv = new ContentValues();
-        //String CREATE_TABLE_MAIN_HYMN = "CREATE TABLE `hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT )";
-        //db.execSQL("DROP TABLE IF EXISTS `main_hymn`");
-        //db.execSQL(CREATE_TABLE_MAIN_HYMN);
-        hymn mh;
-
-        for(int i = 0; i < jsonArray.length(); i++)
-        { JSONObject jsonObject;
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-                mh = new hymn(jsonObject.getInt("id"),jsonObject.getString("english"),jsonObject.getString("yoruba"));
-                cv.put(MHCOLHYMNID, mh.hymn_id);
-                cv.put(MHCOLENG, mh.english);
-                cv.put(MHCOLYOR, mh.yoruba);
-                db.insert(TABLE_APP_HYMN, null, cv);
-                Log.i("add App hymn", "Success" + mh.toString());
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-    public boolean AddMainVerse(JSONArray jsonArray) {
-        ContentValues cv = new ContentValues();
-        //String CREATE_TABLE_MAIN_HYMN = "CREATE TABLE `hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT )";
-        //db.execSQL("DROP TABLE IF EXISTS `main_hymn`");
-        //db.execSQL(CREATE_TABLE_MAIN_HYMN);
-
-        verse vh;
-
-        for(int i = 0; i < jsonArray.length(); i++)
-        { JSONObject jsonObject;
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-                vh = new verse(jsonObject.getInt("hymn_id"),jsonObject.getInt("verse_id"),jsonObject.getString("english"),jsonObject.getString("yoruba"));
-                cv.put(VHCOLHYMNID, vh.hymn_id);
-                cv.put(VHCOLVERSEID, vh.verse_id);
-                cv.put(VHCOLENG, vh.english);
-                cv.put(VHCOLYOR, vh.yoruba);
-                db.insert(TABLE_MAIN_VERSE, null, cv);
-                Log.i("Add Main Verse", "Success" + vh.toString());
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-    public boolean AddAppVerse(JSONArray jsonArray) {
-        ContentValues cv = new ContentValues();
-        //String CREATE_TABLE_MAIN_HYMN = "CREATE TABLE `hymn` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `hymn_id` INTEGER NOT NULL, `english` TEXT, `yoruba` TEXT )";
-        //db.execSQL("DROP TABLE IF EXISTS `main_hymn`");
-        //db.execSQL(CREATE_TABLE_MAIN_HYMN);
-
-        verse vh;
-
-        for(int i = 0; i < jsonArray.length(); i++)
-        { JSONObject jsonObject;
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-                vh = new verse(jsonObject.getInt("hymn_id"),jsonObject.getInt("verse_id"),jsonObject.getString("english"),jsonObject.getString("yoruba"));
-                cv.put(VHCOLHYMNID, vh.hymn_id);
-                cv.put(VHCOLVERSEID, vh.verse_id);
-                cv.put(VHCOLENG, vh.english);
-                cv.put(VHCOLYOR, vh.yoruba);
-                db.insert(TABLE_APP_VERSE, null, cv);
-                Log.i("add App Verse", "Success" + vh.toString());
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-
     //GET Data From Database
 
     public Cursor SearchDB(String HymnNumber,Integer HymnType)
@@ -298,10 +203,26 @@ public  class DbHelper{
         }
         return res;
     }
+    public Cursor GetAllMainFavorite() {
+        Cursor res = db.rawQuery("select * from main_hymn where favorite=1", null);
+        if (res == null)
+        {
+            return null;
+        }
+        return res;
+    }
 
     public Cursor GetAllAppendixHymnList() {
         Cursor res = db.rawQuery("select * from appendix_hymn", null);
 
+        if (res == null)
+        {
+            return null;
+        }
+        return res;
+    }
+    public Cursor GetAllAppFavorite() {
+        Cursor res = db.rawQuery("select * from appendix_hymn where favorite=1", null);
         if (res == null)
         {
             return null;
@@ -328,6 +249,27 @@ public  class DbHelper{
             res = null;
         }
         return res;
+    }
+
+    public boolean setMainFavorite(int hymn_id, int fave){
+        try{
+            Log.e(TAG, "setMainFavorite: " + hymn_id + " + " + fave);
+            db.execSQL("UPDATE "+ TABLE_MAIN_HYMN +" SET favorite= " + fave + " WHERE hymn_id = " + hymn_id);
+            return true;
+        }catch(Exception ex){
+            Log.e(TAG, "setMainFavorite: Error" + ex);
+            return false;
+        }
+    }
+    public boolean setAppFavorite(int hymn_id, int fave){
+        try{
+            Log.e(TAG, "setappFavorite: " + hymn_id + " + " + fave);
+            db.execSQL("UPDATE "+ TABLE_APP_HYMN +" SET favorite= " + fave + " WHERE hymn_id = " + hymn_id);
+            return true;
+        }catch(Exception ex){
+            Log.e(TAG, "setMainFavorite: Error" + ex);
+            return false;
+        }
     }
 
 }

@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.gacpedromediateam.primus.gachymnal.Adapters.HymnViewAdapter;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 import com.gacpedromediateam.primus.gachymnal.R;
 import com.google.gson.Gson;
@@ -40,7 +40,7 @@ public class ViewActivity extends AppCompatActivity {
     AppPreference appPreference;
     String TAG = "ViewActivity";
     CoordinatorLayout cord;
-    private hymn payload;
+    private Hymn payload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +63,14 @@ public class ViewActivity extends AppCompatActivity {
 
         if(getIntent().getExtras()!= null)
         {
-            //Log.e(TAG, "onCreate: " +getIntent().getStringExtra("hymn"));
+            //Log.e(TAG, "onCreate: " +getIntent().getStringExtra("Hymn"));
             if(getIntent().getExtras().containsKey("title") || getIntent().getExtras().containsKey("hymnType") || getIntent().getExtras().containsKey("HymnID") )
             {
                 ID = getIntent().getStringExtra("HymnID");
                 Title = getIntent().getStringExtra("title");
                 HymnType = getIntent().getStringExtra("hymnType");
 
-                payload = new Gson().fromJson(getIntent().getStringExtra("hymn"), hymn.class);
+                payload = new Gson().fromJson(getIntent().getStringExtra("Hymn"), Hymn.class);
             }
             else
             {
