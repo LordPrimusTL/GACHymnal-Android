@@ -27,8 +27,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private Api apiService = null;
     private static RetrofitClient retrofitClient = null;
-    public static  String Defaulthost = "http://gacserver.000webhostapp.com/api/";
-    //public static String Defaulthost = "http://10.0.2.2:8000/api/";
+    //public static  String Defaulthost = "http://gacserver.000webhostapp.com/api/";
+    public static String Defaulthost = "http://10.0.2.2:8000/api/";
 
     private static Context context;
     public static RetrofitClient getInstance(Context ctx, String url) {

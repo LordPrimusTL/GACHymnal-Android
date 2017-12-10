@@ -111,6 +111,7 @@ public class ViewActivity extends AppCompatActivity {
             }
 
         }
+        //Log.e(TAG, "populateList: "+ payload);
         ((TextView)findViewById(R.id.viewHymnTitle)).setText(language == 0 ? payload.getYoruba() : payload.getEnglish());
         ArrayList<verse> GetVerse = GetVerse(ID);
         ListView listView = findViewById(R.id.view_hymn_list);
@@ -120,7 +121,6 @@ public class ViewActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
 
@@ -143,7 +143,7 @@ public class ViewActivity extends AppCompatActivity {
                 verseChars.add(new verse(res.getInt(1), res.getInt(2), res.getString(3),String.valueOf(res.getString(4))));
             }
 
-            Log.e(TAG, "GetVerse: " + verseChars);
+            //Log.e(TAG, "GetVerse: " + verseChars);
             ((TextView)findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
 
         }

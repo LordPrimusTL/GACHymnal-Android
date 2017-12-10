@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.gacpedromediateam.primus.gachymnal.Activity.MainActivity;
 import com.gacpedromediateam.primus.gachymnal.Activity.ViewActivity;
 import com.gacpedromediateam.primus.gachymnal.Adapters.MainListAdapter;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
@@ -67,7 +66,7 @@ public class MainFragment extends Fragment {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 Object o = listView.getItemAtPosition(position);
                 Hymn fullObject = (Hymn) o;
-                Log.i("Hymn Details", fullObject.getTitle() + String.valueOf(fullObject.getID()));
+                //Log.i("Hymn Details", fullObject.getTitle() + String.valueOf(fullObject.getID()));
                 //Toast.makeText(getActivity(), "You have chosen: " + " " + fullObject.getID(), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(getActivity(), ViewActivity.class)
                         .putExtra("Hymn", new Gson().toJson(fullObject))

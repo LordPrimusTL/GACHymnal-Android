@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     AppPreference appPreference;
     CoordinatorLayout cord;
     int language;
+    String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +168,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_fave:
                 startActivity(new Intent(MainActivity.this, FavoritesActivity.class));
                 overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                return true;
+            case R.id.action_contributors:
+                startActivity(new Intent(MainActivity.this, ContributorActivity.class));
+                overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                Log.e(TAG, "onOptionsItemSelected: Contributors Clicked");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

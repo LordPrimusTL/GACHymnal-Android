@@ -56,10 +56,16 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Activity.FavoritesActivity"
-            android:label="@string/title_activity_favorites"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
+            android:label="@string/title_activity_favorites"
             android:parentActivityName=".Activity.MainActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activity.ContributorActivity"
+            android:label="@string/title_activity_contributor"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".Activity.MainActivity"
+            />
     </application>
 
 </manifest>

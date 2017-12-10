@@ -5,7 +5,13 @@
 
     <item
         android:id="@+id/action_fave"
-        android:icon="@drawable/ic_action_fave_all"
+        android:icon="@drawable/ic_action_all_fave"
         android:title="Favorites"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_contributors"
+        android:icon="@drawable/ic_action_contri"
+        android:title="Contributors"
         app:showAsAction="always"/>
 </menu>
