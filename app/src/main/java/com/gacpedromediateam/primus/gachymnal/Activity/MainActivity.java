@@ -39,15 +39,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        cord = (CoordinatorLayout) findViewById(R.id.main_content);
+        cord = findViewById(R.id.main_content);
         appPreference = new AppPreference(MainActivity.this);
         toolbar.setTitle("    GAC Hymnal");
         ActionBar supportActionBar = getSupportActionBar();
         language = appPreference.getLanguage();
         if (supportActionBar != null) {
-            supportActionBar.setTitle("      GAC Hymnal");
+            supportActionBar.setTitle("  GAC Hymnal");
         }
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
