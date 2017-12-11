@@ -27,18 +27,18 @@
             android:layout_weight="1"
             android:paddingBottom="20dp"
             android:listSelector="@android:color/transparent"/>
-        <TextView
-            android:id="@+id/AmenAmin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:layout_gravity="right"
-            android:text="Amen."
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:paddingTop="10dp"
-            android:paddingLeft="150dp"
-            android:paddingBottom="10dp"
-            android:textColor="@android:color/black"/>
+        <!--<TextView-->
+            <!--android:id="@+id/AmenAmin"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAllCaps="true"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:text="Amen."-->
+            <!--android:textSize="16sp"-->
+            <!--android:textAlignment="center"-->
+            <!--android:paddingTop="10dp"-->
+            <!--android:paddingLeft="150dp"-->
+            <!--android:paddingBottom="10dp"-->
+            <!--android:textColor="@android:color/black"/>-->
     </LinearLayout>
 </LinearLayout>

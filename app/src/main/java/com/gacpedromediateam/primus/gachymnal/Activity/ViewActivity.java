@@ -8,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +39,7 @@ public class ViewActivity extends AppCompatActivity {
     public Integer language;
     public ZoomView zoomView;
     AppPreference appPreference;
+    private LayoutInflater mInflater;
     String TAG = "ViewActivity";
     CoordinatorLayout cord;
     private Hymn payload;
@@ -50,6 +52,7 @@ public class ViewActivity extends AppCompatActivity {
         cord = findViewById(R.id.view_container);
         Toolbar toolbar = findViewById(R.id.vhtoolbar);
         toolbar.setTitle("Am Here");
+        mInflater = LayoutInflater.from(this);
         View v = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_hymn_layout, null, false);
         v.setLayoutParams(new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         zoomView = new ZoomView(this);
@@ -116,6 +119,9 @@ public class ViewActivity extends AppCompatActivity {
         ArrayList<verse> GetVerse = GetVerse(ID);
         ListView listView = findViewById(R.id.view_hymn_list);
         listView.setAdapter(new HymnViewAdapter(this,GetVerse,language));
+        View v = mInflater.inflate(R.layout.amen, null);
+        ((TextView)v.findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
+        listView.addFooterView(v);
     }
 
     @Override
@@ -144,7 +150,6 @@ public class ViewActivity extends AppCompatActivity {
             }
 
             //Log.e(TAG, "GetVerse: " + verseChars);
-            ((TextView)findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
 
         }
         return verseChars;

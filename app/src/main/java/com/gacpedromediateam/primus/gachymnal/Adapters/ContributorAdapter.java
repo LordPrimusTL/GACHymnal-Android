@@ -52,7 +52,7 @@ public class ContributorAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.contri_view, null);
             holder = new ViewHolder();
-            holder.ID = convertView.findViewById(R.id.cId);
+            //holder.ID = convertView.findViewById(R.id.cId);
             holder.Name = convertView
                     .findViewById(R.id.cName);
             convertView.setTag(holder);
@@ -60,7 +60,7 @@ public class ContributorAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.ID.setText("");
+        //holder.ID.setText("");
         //holder.ID.setText(String.valueOf(teams.get(position).getId()));
         holder.Name.setText(teams.get(position).getName());
 
