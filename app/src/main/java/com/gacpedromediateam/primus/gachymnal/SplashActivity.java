@@ -133,11 +133,7 @@ public class SplashActivity extends AppCompatActivity {
 
             }
             else{
-                if(pBar.isShowing())
-                {
-                    pBar.dismiss();
-                }
-                showAlert("No Internet");
+                showAlert("No Internet!");
             }
         }catch (Exception ex){
             FirebaseCrash.logcat(Log.ERROR, TAG, ex.toString());
@@ -168,6 +164,7 @@ public class SplashActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             pBar.show();
                             dialogShown = false;
+                            dataCount = 0;
                             getHymnFromServer();
                         }
                     }).show();
@@ -264,6 +261,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<verse> verses) {
+                        Log.e(TAG, "onNext: " + verses);
                         db.addMainVerse(verses);
                         checkCount();
                         Log.e(TAG, "onNext: main Verse Thread Started");
@@ -335,7 +333,7 @@ public class SplashActivity extends AppCompatActivity {
                     request = true;
                     pBar.dismiss();
                     db.close();
-                    appPreference.setAtFirstRun(false);
+                    //appPreference.setAtFirstRun(false);
                     Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                     overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
