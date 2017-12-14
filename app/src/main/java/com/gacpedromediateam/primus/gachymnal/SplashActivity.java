@@ -198,13 +198,11 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<Hymn> hymns) {
-                        if(hymns.size() ==  400)
-                            appPreference.setMainHymn(new Gson().toJson(hymns));
-
-                        db.addMainHymnList(hymns);
-                        checkCount();
-                        Log.e(TAG, "onNext: Main Hymn Thread Started");
-                        pBar.dismiss();
+                        if(db.addMainHymnList(hymns)){
+                            checkCount();
+                        }else {
+                            showAlert("An Error Occurred. Please Try Again");
+                        }
                     }
                 });
     }
@@ -230,13 +228,12 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<Hymn> hymns) {
-                        if(hymns.size() ==  100)
-                            appPreference.setAppHymn(new Gson().toJson(hymns));
+                        if(db.addAppHymnList(hymns)){
+                            checkCount();
+                        }else {
+                            showAlert("An Error Occurred. Please Try Again");
+                        }
 
-                        db.addAppHymnList(hymns);
-                        checkCount();
-                        Log.e(TAG, "onNext: App Hymn Thread Started");
-                        //pBar.dismiss();
                     }
                 });
     }
@@ -261,9 +258,12 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<verse> verses) {
-                        Log.e(TAG, "onNext: " + verses);
-                        db.addMainVerse(verses);
-                        checkCount();
+//                        Log.e(TAG, "onNext: " + verses);
+                        if(db.addMainVerse(verses)){
+                            checkCount();
+                        }else {
+                            showAlert("An Error Occurred. Please Try Again");
+                        }
                         Log.e(TAG, "onNext: main Verse Thread Started");
 
                     }
@@ -289,8 +289,11 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<verse> verses) {
-                        db.addAppVerse(verses);
-                        checkCount();
+                        if(db.addAppVerse(verses)){
+                            checkCount();
+                        }else {
+                            showAlert("An Error Occurred. Please Try Again");
+                        }
                         Log.e(TAG, "onNext: App Verse Thread Start");
                     }
                 });

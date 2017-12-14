@@ -30,7 +30,6 @@
         android:text="@string/dedication"
         android:id="@+id/textView"
         android:fontFamily="monospace"
-        android:layout_marginTop="45dp"
         android:layout_below="@+id/imageView"
         android:layout_alignParentStart="true" />
 

@@ -111,9 +111,10 @@ public  class DbHelper{
         Log.i("App Verse", "Truncated");
     }
 
-    public void addMainHymnList(List<Hymn> hymns) {
-
+    public boolean addMainHymnList(List<Hymn> hymns) {
+        boolean check = true;
         ContentValues cv = new ContentValues();
+        int i = 1;
         for (Hymn mh: hymns) {
             try{
                 cv.put(MHCOLHYMNID, mh.hymn_id);
@@ -121,15 +122,20 @@ public  class DbHelper{
                 cv.put(MHCOLYOR, mh.yoruba);
                 cv.put(MHFAVE, 0);
                 db.insert(TABLE_MAIN_HYMN, null, cv);
+                Log.e(TAG, "addMainHymnList: added " + i++);
+
             }catch(Exception ex){
                 Log.e(TAG, "addMainHymnList: " + ex );
+                check = false;
             }
         }
         Log.e("Add Main Hymn", "Success ");
+        return check;
     }
-    public void addAppHymnList(List<Hymn> hymns) {
-
+    public boolean addAppHymnList(List<Hymn> hymns) {
+        boolean check = true;
         ContentValues cv = new ContentValues();
+        int i = 1;
         for (Hymn mh: hymns) {
             try{
                 cv.put(MHCOLHYMNID, mh.hymn_id);
@@ -137,15 +143,21 @@ public  class DbHelper{
                 cv.put(MHCOLYOR, mh.yoruba);
                 cv.put(MHFAVE, 0);
                 db.insert(TABLE_APP_HYMN, null, cv);
+                Log.e(TAG, "addAppHymnList: added " + i++ );
+
             }catch(Exception ex){
                 Log.e(TAG, "addAppHymnList: " + ex );
+                check = false;
             }
         }
         Log.e("Add App Hymn", "Success ");
+        return check;
     }
 
-    public void addMainVerse(List<verse> verse){
+    public boolean addMainVerse(List<verse> verse){
+        boolean check = true;
         ContentValues cv = new ContentValues();
+        int i = 1;
         for (verse vs: verse) {
             try{
                 cv.put(VHCOLHYMNID, vs.hymn_id);
@@ -153,14 +165,21 @@ public  class DbHelper{
                 cv.put(VHCOLENG, vs.english);
                 cv.put(VHCOLYOR, vs.yoruba);
                 db.insert(TABLE_MAIN_VERSE, null, cv);
+                Log.e(TAG, "addMainVerseList: added" + i++);
+
             }catch(Exception ex){
                 Log.e(TAG, "addMainHymnList: " + ex );
+                check = false;
+                break;
             }
         }
         Log.e("Add Main Hymn", "Success ");
+        return check;
     }
-    public void addAppVerse(List<verse> verse){
+    public boolean addAppVerse(List<verse> verse){
+        boolean check = true;
         ContentValues cv = new ContentValues();
+        int i = 1;
         for (verse vs: verse) {
             try{
                 cv.put(VHCOLHYMNID, vs.hymn_id);
@@ -168,33 +187,19 @@ public  class DbHelper{
                 cv.put(VHCOLENG, vs.english);
                 cv.put(VHCOLYOR, vs.yoruba);
                 db.insert(TABLE_APP_VERSE, null, cv);
+                Log.e(TAG, "addAppVerseList: added"+ i++ );
             }catch(Exception ex){
-                Log.e(TAG, "addMainHymnList: " + ex );
+                Log.e(TAG, "addAppHymnList: " + ex );
+                check = false;
+                break;
             }
         }
         Log.e("Add Main Hymn", "Success ");
+        return check;
     }
 
 
     //GET Data From Database
-
-    public Cursor SearchDB(String HymnNumber,Integer HymnType)
-    {
-        Cursor res = null;
-        if(HymnType == 0) {
-            res = db.rawQuery("select * from main_hymn  WHERE hymn_id LIKE '%" + HymnNumber + "%'",null);
-        }
-
-        if(HymnType == 1)
-            res = db.rawQuery("select * from appendix_hymn  WHERE hymn_id LIKE '%" + HymnNumber + "%'",null);
-
-        if (res == null)
-        {
-            return null;
-        }
-        return res;
-    }
-
     public Cursor GetAllMainHymnList(){
         Cursor res = db.rawQuery("select * from main_hymn", null);
         if (res == null)
