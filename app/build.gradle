@@ -58,6 +58,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.2.1'
     compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
     compile 'com.android.support:recyclerview-v7:26.0.+'
+    compile 'com.intuit.sdp:sdp-android:1.0.4'
+
     testCompile 'junit:junit:4.12'
 }
 
