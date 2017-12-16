@@ -36,10 +36,10 @@
                 android:textAllCaps="true"
                 android:layout_gravity="center"
                 android:text="Project Team"
-                android:textSize="22sp"
+                android:textSize="@dimen/_22sdp"
                 android:textAlignment="center"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingBottom="@dimen/_20sdp"
                 android:textColor="@android:color/black"/>
             <View
                 android:layout_width="match_parent"

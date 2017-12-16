@@ -38,7 +38,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
             android:maxLines="1"
-            android:paddingTop="10dp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:text="For all the blessings of the light:"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_18sdp" />
