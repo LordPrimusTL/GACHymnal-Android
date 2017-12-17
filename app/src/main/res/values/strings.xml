@@ -15,4 +15,7 @@
     <string name="title_activity_zoom">ZoomActivity</string>
     <string name="dedication">This project is dedicated to the Life, \nTimes and Memories of this great Man of God, Rev. S.A Sadela. \nThank You for Everything!\n - GAC Pedro Media Team.</string>
     <string name="verseTest">Awake, my soul, and with the sun\nThy daily stage of duty run;\nShake off dull sloth, and joyful rise,\nTo pay thy morning sacrifice.</string>
+    <string name="title_activity_rvtest">RVTest</string>
+    <string name="title_activity_favorites">FavoritesActivity</string>
+    <string name="title_activity_contributor">ContributorActivity</string>
 </resources>

@@ -8,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import com.gacpedromediateam.primus.gachymnal.Adapters.HymnViewAdapter;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 import com.gacpedromediateam.primus.gachymnal.R;
 import com.google.gson.Gson;
@@ -38,9 +39,10 @@ public class ViewActivity extends AppCompatActivity {
     public Integer language;
     public ZoomView zoomView;
     AppPreference appPreference;
+    private LayoutInflater mInflater;
     String TAG = "ViewActivity";
     CoordinatorLayout cord;
-    private hymn payload;
+    private Hymn payload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class ViewActivity extends AppCompatActivity {
         cord = findViewById(R.id.view_container);
         Toolbar toolbar = findViewById(R.id.vhtoolbar);
         toolbar.setTitle("Am Here");
+        mInflater = LayoutInflater.from(this);
         View v = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_hymn_layout, null, false);
         v.setLayoutParams(new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         zoomView = new ZoomView(this);
@@ -63,14 +66,14 @@ public class ViewActivity extends AppCompatActivity {
 
         if(getIntent().getExtras()!= null)
         {
-            //Log.e(TAG, "onCreate: " +getIntent().getStringExtra("hymn"));
+            //Log.e(TAG, "onCreate: " +getIntent().getStringExtra("Hymn"));
             if(getIntent().getExtras().containsKey("title") || getIntent().getExtras().containsKey("hymnType") || getIntent().getExtras().containsKey("HymnID") )
             {
                 ID = getIntent().getStringExtra("HymnID");
                 Title = getIntent().getStringExtra("title");
                 HymnType = getIntent().getStringExtra("hymnType");
 
-                payload = new Gson().fromJson(getIntent().getStringExtra("hymn"), hymn.class);
+                payload = new Gson().fromJson(getIntent().getStringExtra("Hymn"), Hymn.class);
             }
             else
             {
@@ -111,16 +114,19 @@ public class ViewActivity extends AppCompatActivity {
             }
 
         }
+        //Log.e(TAG, "populateList: "+ payload);
         ((TextView)findViewById(R.id.viewHymnTitle)).setText(language == 0 ? payload.getYoruba() : payload.getEnglish());
         ArrayList<verse> GetVerse = GetVerse(ID);
         ListView listView = findViewById(R.id.view_hymn_list);
         listView.setAdapter(new HymnViewAdapter(this,GetVerse,language));
+        View v = mInflater.inflate(R.layout.amen, null);
+        ((TextView)v.findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
+        listView.addFooterView(v);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
 
@@ -143,8 +149,7 @@ public class ViewActivity extends AppCompatActivity {
                 verseChars.add(new verse(res.getInt(1), res.getInt(2), res.getString(3),String.valueOf(res.getString(4))));
             }
 
-            Log.e(TAG, "GetVerse: " + verseChars);
-            ((TextView)findViewById(R.id.AmenAmin)).setText(language == 0 ? "Amin." : "Amen.");
+            //Log.e(TAG, "GetVerse: " + verseChars);
 
         }
         return verseChars;

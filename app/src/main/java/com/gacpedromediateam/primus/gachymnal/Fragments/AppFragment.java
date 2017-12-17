@@ -1,17 +1,20 @@
 package com.gacpedromediateam.primus.gachymnal.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -20,7 +23,7 @@ import com.gacpedromediateam.primus.gachymnal.Activity.ViewActivity;
 import com.gacpedromediateam.primus.gachymnal.Adapters.AppListAdapter;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.R;
 import com.google.gson.Gson;
 
@@ -35,8 +38,15 @@ public class AppFragment extends Fragment {
     AppPreference appPreference;
     public AppListAdapter adapter;
     public String TAG = "App List";
+    DbHelper db;
+    String type = null;
     public AppFragment() {
         // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public AppFragment(String fave) {
+        this.type = fave;
     }
 
 
@@ -45,14 +55,12 @@ public class AppFragment extends Fragment {
 
         appPreference = new AppPreference(getContext());
         View view = null;
-        SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         language = appPreference.getLanguage();
-        ArrayList<hymn> GetHymns = GetHymnList();
+        final ArrayList<Hymn> GetHymns = GetHymnList();
 
         view = inflater.inflate(R.layout.fragment_app_hymn,container,false);
         final ListView listView  = view.findViewById(R.id.appendix_list_view);
 
-        //final ListView listView = (ListView) view.findViewById(R.id.main_list_view);
 
         adapter = new AppListAdapter(this.getActivity(), GetHymns, language);
         listView.setAdapter(adapter);
@@ -61,16 +69,43 @@ public class AppFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 Object o = listView.getItemAtPosition(position);
-                hymn fullObject = (hymn) o;
+                Hymn fullObject = (Hymn) o;
                 Log.i("Hymn Details", fullObject.getTitle() + String.valueOf(fullObject.getID()));
                 //Toast.makeText(getActivity(), "You have chosen: " + " " + fullObject.getID(), Toast.LENGTH_LONG).show();
                 startActivity(new Intent(getActivity(), ViewActivity.class)
-                        .putExtra("hymn", new Gson().toJson(fullObject))
+                        .putExtra("Hymn", new Gson().toJson(fullObject))
                         .putExtra("HymnID",String.valueOf(fullObject.getID()))
                         .putExtra("title",fullObject.getTitle())
                         .putExtra("hymnType",String.valueOf(1)));
                 getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                Object o = listView.getItemAtPosition(position);
+                final Hymn hymn = (Hymn) o;
+                final BottomSheetDialog mBottomSheet = new BottomSheetDialog(getActivity());
+                View sheetView = getLayoutInflater().inflate(hymn.fave == 1 ? R.layout.user_no_fave : R.layout.user_fave, null);
+                mBottomSheet.setContentView(sheetView);
+                LinearLayout data = sheetView.findViewById(R.id.fave);
+                data.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.e(TAG, "onClick: Fave" +  hymn );
+                        GetHymns.get(position).setFave(hymn.fave == 1 ? 0 : 1);
+                        Log.e(TAG, "onClick: " + GetHymns.get(position).getFave());
+                        db.setAppFavorite(hymn.hymn_id, GetHymns.get(position).getFave());
+                        if(type != null){
+                            GetHymns.remove(position);
+                        }
+                        adapter.notifyDataSetChanged();
+                        mBottomSheet.dismiss();
+                    }
+                });
+                mBottomSheet.show();
+                return true;
             }
         });
         SearchView inputText = view.findViewById(R.id.search_view_app);
@@ -89,11 +124,16 @@ public class AppFragment extends Fragment {
         return view;
     }
 
-    private ArrayList<hymn> GetHymnList() {
-        ArrayList<hymn> hymnChars = new ArrayList<>();
-        DbHelper db = new DbHelper(getActivity());
+    private ArrayList<Hymn> GetHymnList() {
+        ArrayList<Hymn> hymnChars = new ArrayList<>();
+        Cursor res;
+        db = new DbHelper(getActivity());
         db.open();
-        Cursor res = db.GetAllAppendixHymnList();
+        if(this.type == null){
+             res = db.GetAllAppendixHymnList();
+        }else{
+             res = db.GetAllAppFavorite();
+        }
         if(res == null)
         {
             Toast.makeText(this.getActivity(),"{No Data}", Toast.LENGTH_LONG).show();
@@ -101,7 +141,7 @@ public class AppFragment extends Fragment {
         }
         else{
             while(res.moveToNext()) {
-                hymnChars.add(new hymn(res.getInt(1), res.getString(2), res.getString(3)));
+                hymnChars.add(new Hymn(res.getInt(1), res.getString(2), res.getString(3), res.getInt(4)));
             }
             return hymnChars;
         }

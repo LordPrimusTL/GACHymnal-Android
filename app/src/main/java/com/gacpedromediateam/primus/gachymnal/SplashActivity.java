@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,14 +18,13 @@ import android.widget.Toast;
 import com.gacpedromediateam.primus.gachymnal.Activity.MainActivity;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
 import com.gacpedromediateam.primus.gachymnal.Helper.DbHelper;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.Utility;
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
 import com.gacpedromediateam.primus.gachymnal.Helper.verse;
 import com.gacpedromediateam.primus.gachymnal.Http.RetrofitClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +64,10 @@ public class SplashActivity extends AppCompatActivity {
         util = new Utility(this);
         try {
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, util.AndroidUUID());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, util.PhoneType());
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             Thread.sleep((int) TimeUnit.SECONDS.toMillis(3));
             new LongOperation().execute();
             Log.e(TAG, "onCreate: Sleep Finished.");
@@ -116,25 +118,27 @@ public class SplashActivity extends AppCompatActivity {
     private void getHymnFromServer() {
         //pBar.show();
         try{
-            if(nh.isConnected())
-            {
-                db.open().Truncate();
-                Log.e(TAG, "getHymnFromServer: truncate");
-                callGetMainHymn();
-                callGetAppHymn();
-                callGetMainVerse();
-                callGetAppVerse();
-                callPostApi();
-                Log.e(TAG, "getHymnFromServer: Main called");
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if(nh.isConnected())
+                    {
+                        db.open().Truncate();
+                        Log.e(TAG, "getHymnFromServer: truncate");
+                        callGetMainHymn();
+                        callGetAppHymn();
+                        callGetMainVerse();
+                        callGetAppVerse();
+                        callPostApi();
+                        Log.e(TAG, "getHymnFromServer: Main called");
 
-            }
-            else{
-                if(pBar.isShowing())
-                {
-                    pBar.dismiss();
+                    }
+                    else{
+                        showAlert("No Internet!");
+                    }
                 }
-                showAlert("No Internet");
-            }
+            });
+            th.start();
         }catch (Exception ex){
             FirebaseCrash.logcat(Log.ERROR, TAG, ex.toString());
             FirebaseCrash.report(ex);
@@ -164,6 +168,7 @@ public class SplashActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             pBar.show();
                             dialogShown = false;
+                            dataCount = 0;
                             getHymnFromServer();
                         }
                     }).show();
@@ -181,7 +186,7 @@ public class SplashActivity extends AppCompatActivity {
         retrofitClient.getApiService().getMainHymn()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<hymn>>() {
+                .subscribe(new Subscriber<List<Hymn>>() {
                     @Override
                     public void onCompleted() {
 
@@ -196,14 +201,20 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(final List<hymn> hymns) {
-                        if(hymns.size() ==  400)
-                            appPreference.setMainHymn(new Gson().toJson(hymns));
+                    public void onNext(final List<Hymn> hymns) {
 
-                        db.addMainHymnList(hymns);
-                        checkCount();
-                        Log.e(TAG, "onNext: Main Hymn Thread Started");
-                        pBar.dismiss();
+                        Thread th = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "mainhymnrun:ts ");
+                                if(db.addMainHymnList(hymns)){
+                                    checkCount();
+                                }else {
+                                    showAlert("An Error Occurred. Please Try Again");
+                                }
+                            }
+                        });
+                        th.start();
                     }
                 });
     }
@@ -212,7 +223,7 @@ public class SplashActivity extends AppCompatActivity {
         retrofitClient.getApiService().getAppHymn()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<hymn>>() {
+                .subscribe(new Subscriber<List<Hymn>>() {
                     @Override
                     public void onCompleted() {
 
@@ -222,20 +233,27 @@ public class SplashActivity extends AppCompatActivity {
                     public void onError(Throwable throwable) {
                         error = true;
                         showAlert("No Internet");
-                        Log.e("Error",throwable.getMessage().toString());
+                        Log.e("Error",throwable.getMessage());
                         FirebaseCrash.report(throwable);
 
                     }
 
                     @Override
-                    public void onNext(final List<hymn> hymns) {
-                        if(hymns.size() ==  100)
-                            appPreference.setAppHymn(new Gson().toJson(hymns));
+                    public void onNext(final List<Hymn> hymns) {
 
-                        db.addAppHymnList(hymns);
-                        checkCount();
-                        Log.e(TAG, "onNext: App Hymn Thread Started");
-                        //pBar.dismiss();
+                        Thread th = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "apphymnrun:ts ");
+                                if(db.addAppHymnList(hymns)){
+                                    checkCount();
+                                }else {
+                                    showAlert("An Error Occurred. Please Try Again");
+                                }
+                            }
+                        });
+                        th.start();
+
                     }
                 });
     }
@@ -247,7 +265,6 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new Subscriber<List<verse>>() {
                     @Override
                     public void onCompleted() {
-                        Log.e(TAG, "onCompleted: Completed Mainverse");
                     }
 
                     @Override
@@ -260,10 +277,19 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<verse> verses) {
-                        db.addMainVerse(verses);
-                        checkCount();
-                        Log.e(TAG, "onNext: main Verse Thread Started");
-
+                        //Log.e(TAG, "onNext: " + verses);
+                        Thread th = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "mainverserun:ts ");
+                                if(db.addMainVerse(verses)){
+                                    checkCount();
+                                }else {
+                                    showAlert("An Error Occurred. Please Try Again");
+                                }
+                            }
+                        });
+                        th.start();
                     }
                 });
     }
@@ -275,7 +301,6 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new Subscriber<List<verse>>() {
                     @Override
                     public void onCompleted() {
-                        Log.e(TAG, "onCompleted: Completed Mainverse");
                     }
 
                     @Override
@@ -287,9 +312,18 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(final List<verse> verses) {
-                        db.addAppVerse(verses);
-                        checkCount();
-                        Log.e(TAG, "onNext: App Verse Thread Start");
+                        Thread th = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "appverserun:ts ");
+                                if(db.addAppVerse(verses)){
+                                    checkCount();
+                                }else {
+                                    showAlert("An Error Occurred. Please Try Again");
+                                }
+                            }
+                        });
+                        th.start();
                     }
                 });
     }
@@ -322,22 +356,26 @@ public class SplashActivity extends AppCompatActivity {
                 });
     }
     private void checkCount() {
+        dataCount++;
+        if(dataCount == 4)
+        {
+            throughWithGetData();
+        }
+    }
+
+    private void throughWithGetData(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                dataCount++;
-                if(dataCount == 4)
-                {
-                    request = true;
-                    pBar.dismiss();
-                    db.close();
-                    appPreference.setAtFirstRun(false);
-                    Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
-                    finish();
+                request = true;
+                pBar.dismiss();
+                db.close();
+                appPreference.setAtFirstRun(false);
+                Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                finish();
 
-                }
             }
         });
     }

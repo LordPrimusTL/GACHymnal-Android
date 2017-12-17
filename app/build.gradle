@@ -20,7 +20,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [onesignal_app_id: "f5bb8b49-3c3f-400f-9f40-5665d2defcd0",
+        manifestPlaceholders = [onesignal_app_id               : "f5bb8b49-3c3f-400f-9f40-5665d2defcd0",
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
     }
@@ -42,6 +42,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
     compile 'com.github.apl-devs:appintro:v4.2.0'
@@ -56,6 +57,8 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.2.1'
     compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
+    compile 'com.android.support:recyclerview-v7:26.0.+'
+    compile 'com.intuit.sdp:sdp-android:1.0.4'
 
     testCompile 'junit:junit:4.12'
 }

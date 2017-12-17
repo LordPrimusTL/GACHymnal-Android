@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.R;
 
 import java.util.ArrayList;
@@ -19,13 +20,13 @@ import java.util.ArrayList;
  */
 
 public class AppListAdapter extends BaseAdapter implements Filterable{
-    private static ArrayList<hymn> hymnChar;
-    private static ArrayList<hymn> filteredData;
+    private static ArrayList<Hymn> hymnChar;
+    private static ArrayList<Hymn> filteredData;
     private LayoutInflater mInflater;
     private HymnFilter mFilter;
     private Integer lang;
 
-    public AppListAdapter(Context context, ArrayList<hymn> results, Integer lang) {
+    public AppListAdapter(Context context, ArrayList<Hymn> results, Integer lang) {
         hymnChar = results;
         mInflater = LayoutInflater.from(context);
         this.lang = lang;
@@ -53,6 +54,7 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
             holder.ID = (TextView) convertView.findViewById(R.id.AID);
             holder.Title = (TextView) convertView
                     .findViewById(R.id.ATitle);
+            holder.Fave = convertView.findViewById(R.id.imgAFave);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -63,6 +65,11 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
         }else{
             holder.ID.setText(String.valueOf(hymnChar.get(position).getID()));
             holder.Title.setText(hymnChar.get(position).getYoruba());
+        }
+        if(hymnChar.get(position).fave == 1){
+            holder.Fave.setImageResource(R.drawable.ic_action_fave);
+        }else {
+            holder.Fave.setImageResource(0);
         }
 
         return convertView;
@@ -79,6 +86,7 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
     static class ViewHolder {
         TextView ID;
         TextView Title;
+        ImageView Fave;
     }
 
     private class HymnFilter extends Filter {
@@ -87,18 +95,18 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint != null && constraint.length() > 0) {
-                ArrayList<hymn> filterList = new ArrayList<>();
+                ArrayList<Hymn> filterList = new ArrayList<>();
                 for (int i = 0; i < filteredData.size(); i++) {
                     if(lang == 1){
                         if((filteredData.get(i).getEnglish().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
                                 (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
-                            hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba());
+                            Hymn hh = new Hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba(),filteredData.get(i).getFave());
                             filterList.add(hh);
                         }
                     }else{
                         if((filteredData.get(i).getYoruba().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
                                 (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
-                            hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba());
+                            Hymn hh = new Hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba(),filteredData.get(i).getFave());
                             filterList.add(hh);
                         }
                     }
@@ -116,7 +124,7 @@ public class AppListAdapter extends BaseAdapter implements Filterable{
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            hymnChar = (ArrayList<hymn>) filterResults.values;
+            hymnChar = (ArrayList<Hymn>) filterResults.values;
             notifyDataSetChanged();
         }
     }

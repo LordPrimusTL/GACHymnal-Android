@@ -9,10 +9,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.gacpedromediateam.primus.gachymnal.Helper.hymn;
+import com.gacpedromediateam.primus.gachymnal.Helper.Hymn;
 import com.gacpedromediateam.primus.gachymnal.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -20,12 +19,12 @@ import java.util.ArrayList;
  */
 
 public class SearchAdapter extends BaseAdapter implements Filterable{
-    private static ArrayList<hymn> hymnChar;
-    private static ArrayList<hymn> filteredData;
+    private static ArrayList<Hymn> hymnChar;
+    private static ArrayList<Hymn> filteredData;
     private LayoutInflater mInflater;
     private HymnFilter mFilter;
 
-    public SearchAdapter(Context context, ArrayList<hymn> results) {
+    public SearchAdapter(Context context, ArrayList<Hymn> results) {
         this.hymnChar = results;
         this.mInflater = LayoutInflater.from(context);
         this.filteredData = results;
@@ -82,12 +81,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable{
             FilterResults results = new FilterResults();
             if(constraint != null && constraint.length() > 0)
             {
-                ArrayList<hymn> filterList = new ArrayList<>();
+                ArrayList<Hymn> filterList = new ArrayList<>();
                 for(int i = 0; i < filteredData.size(); i++)
                 {
                     if((filteredData.get(i).getTitle().toUpperCase()).contains(constraint.toString().toUpperCase()) ||
                             (String.valueOf(filteredData.get(i).getID()).toUpperCase()).contains(constraint.toString().toUpperCase())){
-                        hymn hh = new hymn(filteredData.get(i).getID(),filteredData.get(i).getTitle());
+                        Hymn hh = new Hymn(filteredData.get(i).getID(),filteredData.get(i).getEnglish(), filteredData.get(i).getYoruba(),filteredData.get(i).getFave());
                         filterList.add(hh);
                     }
                 }
@@ -105,7 +104,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable{
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            hymnChar = (ArrayList<hymn>) filterResults.values;
+            hymnChar = (ArrayList<Hymn>) filterResults.values;
             notifyDataSetChanged();
         }
     }
