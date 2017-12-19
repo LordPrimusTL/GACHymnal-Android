@@ -43,6 +43,7 @@ dependencies {
         transitive = true
     }
 
+
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
     compile 'com.github.apl-devs:appintro:v4.2.0'
@@ -59,7 +60,6 @@ dependencies {
     compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
     compile 'com.android.support:recyclerview-v7:26.0.+'
     compile 'com.intuit.sdp:sdp-android:1.0.4'
-
     testCompile 'junit:junit:4.12'
 }
 

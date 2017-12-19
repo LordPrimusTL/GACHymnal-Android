@@ -18,4 +18,5 @@
     <string name="title_activity_rvtest">RVTest</string>
     <string name="title_activity_favorites">FavoritesActivity</string>
     <string name="title_activity_contributor">ContributorActivity</string>
+    <string name="title_activity_feedback">FeedbackActivity</string>
 </resources>

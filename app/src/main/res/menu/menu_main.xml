@@ -14,4 +14,9 @@
         android:icon="@drawable/ic_action_contri"
         android:title="Contributors"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_feedback"
+        android:icon="@drawable/ic_action_feedback"
+        android:title="Feedback"
+        app:showAsAction="ifRoom"/>
 </menu>

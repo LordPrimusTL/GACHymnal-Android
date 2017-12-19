@@ -63,9 +63,17 @@
         <activity
             android:name=".Activity.ContributorActivity"
             android:label="@string/title_activity_contributor"
-            android:theme="@style/AppTheme"
             android:parentActivityName=".Activity.MainActivity"
-            />
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".FeedbackActivity"
+            android:label="@string/title_activity_feedback"
+            android:parentActivityName=".Activity.MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gacpedromediateam.primus.gachymnal.Activity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
