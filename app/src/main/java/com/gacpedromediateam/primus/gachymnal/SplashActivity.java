@@ -50,6 +50,7 @@ public class SplashActivity extends AppCompatActivity {
     boolean dialogShown = false;
     boolean shown;
     private FirebaseAnalytics mFirebaseAnalytics;
+    AlertDialog.Builder ad;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +132,6 @@ public class SplashActivity extends AppCompatActivity {
                         callGetAppVerse();
                         callPostApi();
                         Log.e(TAG, "getHymnFromServer: Main called");
-
                     }
                     else{
                         showAlert("No Internet!");
@@ -145,39 +145,44 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
     public void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(pBar.isShowing())
-                {
-                    pBar.dismiss();
-                }
-                if(!dialogShown)
-                {
-                    AlertDialog.Builder ad = new AlertDialog.Builder(SplashActivity.this);
-                    ad.setTitle("Error")
-                            .setMessage(message)
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialogShown = false;
-                                    System.exit(0);
-                                }
-                            }).setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            pBar.show();
-                            dialogShown = false;
-                            dataCount = 0;
-                            getHymnFromServer();
-                        }
-                    }).show();
-                    dialogShown = true;
-                }
-                //getHymnFromServer();
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(pBar.isShowing())
+                    {
+                        pBar.dismiss();
+                    }
+                    if(!dialogShown)
+                    {
+                        ad = new AlertDialog.Builder(SplashActivity.this);
+                        ad.setTitle("Error")
+                                .setMessage(message)
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialogShown = false;
+                                        System.exit(0);
+                                    }
+                                }).setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pBar.show();
+                                dialogShown = false;
+                                dataCount = 0;
+                                getHymnFromServer();
+                            }
+                        }).show();
+                        dialogShown = true;
+                    }
+                    //getHymnFromServer();
 
-            }
-        });
+                }
+            });
+        }catch (Exception ex){
+            FirebaseCrash.report(ex);
+            System.exit(0);
+        }
     }
 
 
@@ -359,6 +364,9 @@ public class SplashActivity extends AppCompatActivity {
         dataCount++;
         if(dataCount == 4)
         {
+            request = true;
+            db.close();
+            appPreference.setAtFirstRun(false);
             throughWithGetData();
         }
     }
@@ -367,10 +375,7 @@ public class SplashActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                request = true;
                 pBar.dismiss();
-                db.close();
-                appPreference.setAtFirstRun(false);
                 Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
