@@ -19,4 +19,5 @@
     <string name="title_activity_favorites">FavoritesActivity</string>
     <string name="title_activity_contributor">ContributorActivity</string>
     <string name="title_activity_feedback">FeedbackActivity</string>
+    <string name="feedback">Kindly send us a mail: info@gacpedro.com.ng for your comment/suggestions/complaints. Thank You</string>
 </resources>

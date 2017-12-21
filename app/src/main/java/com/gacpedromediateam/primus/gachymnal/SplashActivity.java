@@ -124,13 +124,20 @@ public class SplashActivity extends AppCompatActivity {
                 public void run() {
                     if(nh.isConnected())
                     {
-                        db.open().Truncate();
+                        db.open();
+                        if(db.Truncate()){
+                            callGetMainHymn();
+                            callGetAppHymn();
+                            callGetMainVerse();
+                            callGetAppVerse();
+                            if(!appPreference.getSentDetails())
+                            {
+                                callPostApi();
+                            }
+                        }else {
+                            showAlert("An Error Occurred");
+                        }
                         Log.e(TAG, "getHymnFromServer: truncate");
-                        callGetMainHymn();
-                        callGetAppHymn();
-                        callGetMainVerse();
-                        callGetAppVerse();
-                        callPostApi();
                         Log.e(TAG, "getHymnFromServer: Main called");
                     }
                     else{
@@ -170,6 +177,8 @@ public class SplashActivity extends AppCompatActivity {
                                 pBar.show();
                                 dialogShown = false;
                                 dataCount = 0;
+                                db = null;
+                                db = new DbHelper(context);
                                 getHymnFromServer();
                             }
                         }).show();
@@ -201,7 +210,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onError(Throwable throwable) {
                         error = true;
                         showAlert("No Internet!");
-                        Log.e("Error",throwable.getMessage().toString());
+                        Log.e("Error",throwable.getMessage());
                         FirebaseCrash.report(throwable);
                     }
 
@@ -365,7 +374,6 @@ public class SplashActivity extends AppCompatActivity {
         if(dataCount == 4)
         {
             request = true;
-            db.close();
             appPreference.setAtFirstRun(false);
             throughWithGetData();
         }
@@ -380,7 +388,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
                 finish();
-
             }
         });
     }
@@ -423,13 +430,13 @@ public class SplashActivity extends AppCompatActivity {
             return null;
         }
 
-                 @Override
-         protected void onPostExecute(String result) {}
+        @Override
+        protected void onPostExecute(String result) {}
 
-                 @Override
-         protected void onPreExecute() {}
+        @Override
+        protected void onPreExecute() {}
 
-                 @Override
-         protected void onProgressUpdate(Void... values) {}
+        @Override
+        protected void onProgressUpdate(Void... values) {}
      }
 }

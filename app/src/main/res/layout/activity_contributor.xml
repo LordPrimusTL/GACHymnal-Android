@@ -38,8 +38,8 @@
                 android:text="Project Team"
                 android:textSize="@dimen/_22sdp"
                 android:textAlignment="center"
-                android:paddingTop="@dimen/_20sdp"
-                android:paddingBottom="@dimen/_20sdp"
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_15sdp"
                 android:textColor="@android:color/black"/>
             <View
                 android:layout_width="match_parent"
@@ -50,6 +50,11 @@
                 android:focusableInTouchMode="true"
                 android:id="@+id/contri_view"
                 android:divider="?android:listDivider"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/feedback"
+                android:textSize="@dimen/_15sdp"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -17,8 +17,8 @@ android {
         applicationId "com.gacpedromediateam.primus.gachymnal"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [onesignal_app_id               : "f5bb8b49-3c3f-400f-9f40-5665d2defcd0",
                                 // Project number pulled from dashboard, local value is ignored.
