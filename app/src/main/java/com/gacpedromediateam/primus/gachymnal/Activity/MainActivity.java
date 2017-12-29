@@ -21,6 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.gacpedromediateam.primus.gachymnal.FeedbackActivity;
 import com.gacpedromediateam.primus.gachymnal.Fragments.MainFragment;
 import com.gacpedromediateam.primus.gachymnal.Fragments.AppFragment;
 import com.gacpedromediateam.primus.gachymnal.Helper.AppPreference;
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     CoordinatorLayout cord;
     int language;
     String TAG = "MainActivity";
-
+    NetworkHelper nh = new NetworkHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,6 +176,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ContributorActivity.class));
                 overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
                 Log.e(TAG, "onOptionsItemSelected: Contributors Clicked");
+                return true;
+            case R.id.action_feedback:
+                if(nh.isConnected()){
+                    startActivity(new Intent(MainActivity.this, FeedbackActivity.class));
+                    overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                }else{
+                    Toast.makeText(this,"No internet connection, Please try again", Toast.LENGTH_LONG).show();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

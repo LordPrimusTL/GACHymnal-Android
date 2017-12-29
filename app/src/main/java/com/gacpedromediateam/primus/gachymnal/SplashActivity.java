@@ -50,6 +50,8 @@ public class SplashActivity extends AppCompatActivity {
     boolean dialogShown = false;
     boolean shown;
     private FirebaseAnalytics mFirebaseAnalytics;
+    AlertDialog.Builder ad;
+    String env = "dev";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,15 +125,24 @@ public class SplashActivity extends AppCompatActivity {
                 public void run() {
                     if(nh.isConnected())
                     {
-                        db.open().Truncate();
+                        db.open();
+                        if(db.Truncate()){
+                            callGetMainHymn();
+                            callGetAppHymn();
+                            callGetMainVerse();
+                            callGetAppVerse();
+                            if(!appPreference.getSentDetails())
+                            {
+                                //
+                                if(env.equals("live")){
+                                    callPostApi();
+                                }
+                            }
+                        }else {
+                            showAlert("An Error Occurred");
+                        }
                         Log.e(TAG, "getHymnFromServer: truncate");
-                        callGetMainHymn();
-                        callGetAppHymn();
-                        callGetMainVerse();
-                        callGetAppVerse();
-                        callPostApi();
                         Log.e(TAG, "getHymnFromServer: Main called");
-
                     }
                     else{
                         showAlert("No Internet!");
@@ -145,39 +156,46 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
     public void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(pBar.isShowing())
-                {
-                    pBar.dismiss();
-                }
-                if(!dialogShown)
-                {
-                    AlertDialog.Builder ad = new AlertDialog.Builder(SplashActivity.this);
-                    ad.setTitle("Error")
-                            .setMessage(message)
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialogShown = false;
-                                    System.exit(0);
-                                }
-                            }).setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            pBar.show();
-                            dialogShown = false;
-                            dataCount = 0;
-                            getHymnFromServer();
-                        }
-                    }).show();
-                    dialogShown = true;
-                }
-                //getHymnFromServer();
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(pBar.isShowing())
+                    {
+                        pBar.dismiss();
+                    }
+                    if(!dialogShown)
+                    {
+                        ad = new AlertDialog.Builder(SplashActivity.this);
+                        ad.setTitle("Error")
+                                .setMessage(message)
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialogShown = false;
+                                        System.exit(0);
+                                    }
+                                }).setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pBar.show();
+                                dialogShown = false;
+                                dataCount = 0;
+                                db = null;
+                                db = new DbHelper(context);
+                                getHymnFromServer();
+                            }
+                        }).show();
+                        dialogShown = true;
+                    }
+                    //getHymnFromServer();
 
-            }
-        });
+                }
+            });
+        }catch (Exception ex){
+            FirebaseCrash.report(ex);
+            System.exit(0);
+        }
     }
 
 
@@ -196,7 +214,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onError(Throwable throwable) {
                         error = true;
                         showAlert("No Internet!");
-                        Log.e("Error",throwable.getMessage().toString());
+                        Log.e("Error",throwable.getMessage());
                         FirebaseCrash.report(throwable);
                     }
 
@@ -359,6 +377,8 @@ public class SplashActivity extends AppCompatActivity {
         dataCount++;
         if(dataCount == 4)
         {
+            request = true;
+            appPreference.setAtFirstRun(false);
             throughWithGetData();
         }
     }
@@ -367,15 +387,11 @@ public class SplashActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                request = true;
                 pBar.dismiss();
-                db.close();
-                appPreference.setAtFirstRun(false);
                 Toast.makeText(context, "Completed!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
                 finish();
-
             }
         });
     }
@@ -404,7 +420,9 @@ public class SplashActivity extends AppCompatActivity {
                     {
                         if(nh.isConnected())
                         {
-                            callPostApi();
+                            if(env.equals("live")){
+                                callPostApi();
+                            }
                         }
                     }
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
@@ -418,13 +436,13 @@ public class SplashActivity extends AppCompatActivity {
             return null;
         }
 
-                 @Override
-         protected void onPostExecute(String result) {}
+        @Override
+        protected void onPostExecute(String result) {}
 
-                 @Override
-         protected void onPreExecute() {}
+        @Override
+        protected void onPreExecute() {}
 
-                 @Override
-         protected void onProgressUpdate(Void... values) {}
+        @Override
+        protected void onProgressUpdate(Void... values) {}
      }
 }

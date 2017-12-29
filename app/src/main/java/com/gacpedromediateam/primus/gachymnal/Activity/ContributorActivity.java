@@ -1,12 +1,18 @@
 package com.gacpedromediateam.primus.gachymnal.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gacpedromediateam.primus.gachymnal.Adapters.ContributorAdapter;
+import com.gacpedromediateam.primus.gachymnal.FeedbackActivity;
+import com.gacpedromediateam.primus.gachymnal.Helper.NetworkHelper;
 import com.gacpedromediateam.primus.gachymnal.Helper.Team;
 import com.gacpedromediateam.primus.gachymnal.R;
 
@@ -18,7 +24,7 @@ public class ContributorActivity extends AppCompatActivity {
     public List<Team> teams;
     String TAG = "Contributor";
     ContributorAdapter adapter;
-
+    NetworkHelper nh = new NetworkHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,4 +45,29 @@ public class ContributorActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_fave:
+                startActivity(new Intent(ContributorActivity.this, FavoritesActivity.class));
+                overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                return true;
+            case R.id.action_feedback:
+                if(nh.isConnected()){
+                    startActivity(new Intent(ContributorActivity.this, FeedbackActivity.class));
+                    overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out);
+                }else{
+                    Toast.makeText(this,"No internet connection, Please try again", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

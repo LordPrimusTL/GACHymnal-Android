@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,24 +22,20 @@ import java.util.List;
 
 public  class DbHelper{
 
-    public static final String DATABASE_NAME = "gac.db";
-    public static final String TABLE_USER = "hymn_user";
-    public static final String TABLE_MAIN_HYMN = "main_hymn";
-    public static final String TABLE_APP_HYMN = "appendix_hymn";
-    public static final String TABLE_MAIN_VERSE = "main_verse";
-    public static final String TABLE_APP_VERSE = "appendix_verse";
-    public static final String USERCOLID = "ID";
-    public static final String USERCOLNAME = "Name";
-    public static final String USERCOLUMNBRANCH = "Branch";
-    public static final String USERCOLUMNUUID = "UUID";
-    public static final String MHCOLHYMNID = "hymn_id";
-    public static final String MHCOLENG = "english";
-    public static final String MHCOLYOR = "yoruba";
-    public static final String MHFAVE = "favorite";
-    public static final String VHCOLHYMNID = "hymn_id";
-    public static final String VHCOLVERSEID = "verse_id";
-    public static final String VHCOLENG = "english";
-    public static final String VHCOLYOR = "yoruba";
+    static final String DATABASE_NAME = "gac.db";
+    static final String TABLE_USER = "hymn_user";
+    static final String TABLE_MAIN_HYMN = "main_hymn";
+    static final String TABLE_APP_HYMN = "appendix_hymn";
+    static final String TABLE_MAIN_VERSE = "main_verse";
+    static final String TABLE_APP_VERSE = "appendix_verse";
+    static final String MHCOLHYMNID = "hymn_id";
+    static final String MHCOLENG = "english";
+    static final String MHCOLYOR = "yoruba";
+    static final String MHFAVE = "favorite";
+    static final String VHCOLHYMNID = "hymn_id";
+    static final String VHCOLVERSEID = "verse_id";
+    static final String VHCOLENG = "english";
+    static final String VHCOLYOR = "yoruba";
     private Context ourContext =null;
     private SqlHelper helper;
     private SQLiteDatabase db;
@@ -99,16 +97,22 @@ public  class DbHelper{
         }
     }
 
-    public void Truncate()
+    public boolean Truncate()
     {
-        db.execSQL("DELETE from `main_hymn`");
-        Log.i("Main Hymn", "Truncated");
-        db.execSQL("DELETE from `appendix_hymn`");
-        Log.i("App Hymn", "Truncated");
-        db.execSQL("DELETE from `main_verse`");
-        Log.i("truncate App Verse", "Truncated");
-        db.execSQL("DELETE from `appendix_verse`");
-        Log.i("App Verse", "Truncated");
+        try{
+            db.execSQL("DELETE from `main_hymn`");
+            Log.i("Main Hymn", "Truncated");
+            db.execSQL("DELETE from `appendix_hymn`");
+            Log.i("App Hymn", "Truncated");
+            db.execSQL("DELETE from `main_verse`");
+            Log.i("truncate App Verse", "Truncated");
+            db.execSQL("DELETE from `appendix_verse`");
+            Log.i("App Verse", "Truncated");
+            return true;
+        }catch (Exception ex){
+            FirebaseCrash.report(ex);
+            return false;
+        }
     }
 
     public boolean addMainHymnList(List<Hymn> hymns) {
