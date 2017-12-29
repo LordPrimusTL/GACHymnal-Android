@@ -51,6 +51,7 @@ public class SplashActivity extends AppCompatActivity {
     boolean shown;
     private FirebaseAnalytics mFirebaseAnalytics;
     AlertDialog.Builder ad;
+    String env = "dev";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +133,10 @@ public class SplashActivity extends AppCompatActivity {
                             callGetAppVerse();
                             if(!appPreference.getSentDetails())
                             {
-                                callPostApi();
+                                //
+                                if(env.equals("live")){
+                                    callPostApi();
+                                }
                             }
                         }else {
                             showAlert("An Error Occurred");
@@ -416,7 +420,9 @@ public class SplashActivity extends AppCompatActivity {
                     {
                         if(nh.isConnected())
                         {
-                            callPostApi();
+                            if(env.equals("live")){
+                                callPostApi();
+                            }
                         }
                     }
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
